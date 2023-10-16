@@ -27,6 +27,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
+
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -145,10 +147,18 @@ public class MotorDirectionTest extends LinearOpMode {
             // Once the correct motors move in the correct direction re-comment this code.
 
 
-            leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
-            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
-            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
-            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
+            if(gamepad1.x) {
+                leftFrontPower = 1.0;
+            }
+            if(gamepad1.a) {
+                leftBackPower = 1.0;
+            }
+            if(gamepad1.y) {
+                rightFrontPower = 1.0;
+            }
+            if(gamepad1.b) {
+                rightBackPower = 1.0;
+            }
 
 
             // Send calculated power to wheels
@@ -163,4 +173,5 @@ public class MotorDirectionTest extends LinearOpMode {
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.update();
         }
-    }}
+    }
+}
