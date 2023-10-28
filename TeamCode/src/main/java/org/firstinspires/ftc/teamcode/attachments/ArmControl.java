@@ -2,30 +2,28 @@ package org.firstinspires.ftc.teamcode.attachments;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-//runs the motors of the arm attachment
+/* ArmControl
+ * runs the arm attachment of the robot
+ */
 public class ArmControl{
 
     //FIELDS
-    //Hardware map
+    //hardware map
     private HardwareMap hardwareMap = null;
-    //Declare motors
+    //arm status
+    private boolean status;
+    //telemetry
+    private Telemetry t = null;
+    //motor fields
     private DcMotor leftMotor = null;
     private DcMotor rightMotor = null;
-    //Arm status
-    private boolean status;
-    //Motor Constants:
     private int ticksPerRev;
     private double power = 0.8;
-    //Time
-    private ElapsedTime timer = null;
-    //Encoder counts
     private int leftEncoderValue;
     private int rightEncoderValue;
-    //Rotation constants
+    //rotation constants
     private double offset = 200; //offset angle (starting angle)
     private double rotation; //current angle in degrees, 0 is terminal x axis
     private double targetRotation = offset; //target rotation
@@ -33,16 +31,14 @@ public class ArmControl{
     private double minRotation = -10;
 
     //CONSTRUCTOR
-    /* Opmodes will create an instance of ArmControl class to run the arm motors
-     * takes in the hardwaremap
-     */
-    public ArmControl(HardwareMap hwMap) {
+    public ArmControl(HardwareMap hwMap, Telemetry t) {
         status = false;
+        this.t = t;
         hardwareMap = hwMap;
         initHardware();
     }
 
-    //initialize motors
+    //initialize motor hardware
     private void initHardware() {
         //get motors from ids
         leftMotor = hardwareMap.get(DcMotor.class, "leftArm");
@@ -57,8 +53,13 @@ public class ArmControl{
         rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
+    //initialize arm control mechanism
+    public void init() {
+        status = true;
+    }
+
     //telemetry
-    public void telemetryOutput(Telemetry t) {
+    public void telemetryOutput() {
         //telemetry
         getEncoderValues();
         t.addLine("ArmControl: ");
@@ -68,11 +69,6 @@ public class ArmControl{
         t.addData("rotation", rotation);
         t.addData("targetRotation", targetRotation);
         t.addLine();
-    }
-
-    //initializes the arm control mechanism
-    public void init() {
-        status = true;
     }
 
     //goes to target position
@@ -111,6 +107,4 @@ public class ArmControl{
         //rotate the arm to the target
         goToTargetRotation(targetRotation);
     }
-
-
 }
