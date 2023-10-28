@@ -13,7 +13,7 @@ public class TeleOp extends OpMode {
 
     @Override
     public void init() {
-        //get hardware for the arm
+        //create arm control mechanism
         Arm = new ArmControl(hardwareMap, telemetry);
     }
 

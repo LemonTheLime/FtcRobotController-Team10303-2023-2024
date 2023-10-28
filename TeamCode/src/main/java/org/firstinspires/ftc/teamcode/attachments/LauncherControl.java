@@ -19,7 +19,7 @@ public class LauncherControl{
     private Telemetry t = null;
     //servo fields
     private CRServo servo;
-    private double power;
+    private double power = 1.0;
     private boolean running;
 
     //CONSTRUCTOR
@@ -49,16 +49,19 @@ public class LauncherControl{
         //telemetry
         t.addLine("LauncherControl: ");
         t.addData("status", status);
+        t.addData("running", running);
         t.addLine();
     }
 
     //run the servo
     public void run() {
+        running = true;
         servo.setPower(power);
     }
 
     //stop the servo
     public void stop() {
+        running = false;
         servo.setPower(power);
     }
 
