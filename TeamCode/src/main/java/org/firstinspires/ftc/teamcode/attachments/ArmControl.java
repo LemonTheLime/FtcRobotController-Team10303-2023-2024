@@ -57,14 +57,16 @@ public class ArmControl{
         rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    //test mode (telemetry)
-    public void test(Telemetry t) {
+    //telemetry
+    public void telemetryOutput(Telemetry t) {
         //telemetry
         getEncoderValues();
         t.addLine("ArmControl: ");
+        t.addData("status", status);
         t.addData("leftEncoderCount", leftEncoderValue);
         t.addData("rightEncoderCount", rightEncoderValue);
         t.addData("rotation", rotation);
+        t.addData("targetRotation", targetRotation);
         t.addLine();
     }
 
@@ -74,7 +76,7 @@ public class ArmControl{
     }
 
     //goes to target position
-    public void goToTargetPosition(double angle) {
+    public void goToTargetRotation(double angle) {
         if(status) {
             //get encoder targets
             getEncoderValues();
@@ -107,7 +109,7 @@ public class ArmControl{
         }
 
         //rotate the arm to the target
-        goToTargetPosition(targetRotation);
+        goToTargetRotation(targetRotation);
     }
 
 
