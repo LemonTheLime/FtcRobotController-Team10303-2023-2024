@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
 import org.firstinspires.ftc.teamcode.attachments.ArmControl;
 
 public class TeleOp extends OpMode {
@@ -10,6 +9,7 @@ public class TeleOp extends OpMode {
 
     //arm
     private ArmControl Arm = null;
+
 
     @Override
     public void init() {
