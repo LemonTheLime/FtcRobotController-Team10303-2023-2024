@@ -10,23 +10,28 @@ import org.firstinspires.ftc.teamcode.attachments.LauncherControl;
 public class AttachmentTest extends OpMode {
 
     //FIELDS
-    private ArmControl arm = null;
-    private ClawControl claw = null;
-    private LauncherControl launcher = null;
+    private ArmControl Arm = null;
+    //private ClawControl claw = null;
+    //private LauncherControl launcher = null;
+
 
     @Override
     public void init() {
-        arm = new ArmControl(hardwareMap, telemetry);
-        claw = new ClawControl(hardwareMap, telemetry);
-        launcher = new LauncherControl(hardwareMap, telemetry);
+        Arm = new ArmControl(hardwareMap, telemetry);
+        Arm.init();
+        //claw = new ClawControl(hardwareMap, telemetry);
+        // = new LauncherControl(hardwareMap, telemetry);
     }
 
     @Override
     public void loop() {
         //attachments only give telemetry and are not initialized
-        arm.telemetryOutput();
-        claw.telemetryOutput();
-        launcher.telemetryOutput();
+        Arm.telemetryOutput();
+        //Arm.goToTargetRotation(0);
+        Arm.rotate(-0.05);
+
+        //claw.telemetryOutput();
+        //launcher.telemetryOutput();
         telemetry.update();
     }
 }

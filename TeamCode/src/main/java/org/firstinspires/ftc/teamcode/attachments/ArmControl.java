@@ -19,7 +19,7 @@ public class ArmControl{
     //motor fields
     private DcMotor leftMotor = null;
     private DcMotor rightMotor = null;
-    private int ticksPerRev;
+    private int ticksPerRev = 288;
     private double power = 0.8;
     private int leftEncoderValue;
     private int rightEncoderValue;
@@ -46,11 +46,14 @@ public class ArmControl{
 
         //reverse motors here if needed:
         //arm rotating out should negative encoder changes for both motors
-        leftMotor.setDirection(DcMotor.Direction.REVERSE);
+        rightMotor.setDirection(DcMotor.Direction.REVERSE);
 
-        //set motors to run with encoders to target positions
-        leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //set motors to run with encoders
+        leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
     }
 
     //initialize arm control mechanism
@@ -64,8 +67,8 @@ public class ArmControl{
         getEncoderValues();
         t.addLine("ArmControl: ");
         t.addData("status", status);
-        t.addData("leftEncoderCount", leftEncoderValue);
-        t.addData("rightEncoderCount", rightEncoderValue);
+        t.addData("leftEncoderValue", leftEncoderValue);
+        t.addData("rightEncoderValue", rightEncoderValue);
         t.addData("rotation", rotation);
         t.addData("targetRotation", targetRotation);
         t.addLine();
@@ -76,9 +79,14 @@ public class ArmControl{
         if(status) {
             //get encoder targets
             getEncoderValues();
-            int targetValue = (int)(ticksPerRev / 360 * (angle - offset));
+            int targetValue = (int)(ticksPerRev / 360.0 * (angle - offset));
+            t.addData("targetValue", targetValue);
             leftMotor.setTargetPosition(targetValue);
             rightMotor.setTargetPosition(targetValue);
+
+            //set motors to run with position
+            leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             //power motors (move motor towards target position)
             leftMotor.setPower(power);
@@ -90,7 +98,7 @@ public class ArmControl{
     private void getEncoderValues() {
         leftEncoderValue = leftMotor.getCurrentPosition();
         rightEncoderValue = rightMotor.getCurrentPosition();
-        rotation = offset + leftEncoderValue / ticksPerRev * 360.0;
+        rotation = offset + (double)leftEncoderValue / ticksPerRev * 360.0;
     }
 
     //rotates the target arm angle
