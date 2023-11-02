@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode.attachments;
 
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /* LauncherControl
- * runs the continuous servo for the drone launcher
+ * runs the motor for the drone launcher
  */
 public class LauncherControl{
 
@@ -17,8 +16,8 @@ public class LauncherControl{
     private boolean status;
     //telemetry
     private Telemetry t = null;
-    //servo fields
-    private CRServo servo;
+    //motor fields
+    private DcMotor launcher;
     private double power = 1.0;
     private boolean running;
 
@@ -30,10 +29,10 @@ public class LauncherControl{
         initHardware();
     }
 
-    //initialize CRServo hardware
+    //initialize motor hardware
     private void initHardware() {
-        //get servo from id
-        servo = hardwareMap.get(CRServo.class, "launcher");
+        //get motor from id
+        launcher = hardwareMap.get(DcMotor.class, "launcher");
 
         //change direction if necessary
     }
@@ -56,13 +55,13 @@ public class LauncherControl{
     //run the servo
     public void run() {
         running = true;
-        servo.setPower(power);
+        launcher.setPower(power);
     }
 
     //stop the servo
     public void stop() {
         running = false;
-        servo.setPower(power);
+        launcher.setPower(0);
     }
 
 }
