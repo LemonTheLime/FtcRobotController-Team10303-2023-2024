@@ -29,6 +29,7 @@ public class ArmControl{
     private double targetRotation = offset; //target rotation
     private double maxRotation = offset; //arm starts off here
     private double minRotation = -14.6;
+    private double gearRatio = 26.0 / 15.0;
 
     //CONSTRUCTOR
     public ArmControl(HardwareMap hwMap, Telemetry t) {
@@ -79,7 +80,7 @@ public class ArmControl{
         if(status) {
             //get encoder targets
             getEncoderValues();
-            int targetValue = (int)(ticksPerRev / 360.0 * (angle - offset));
+            int targetValue = (int)(ticksPerRev / 360.0 * (angle - offset) * gearRatio);
             t.addData("targetValue", targetValue);
             leftMotor.setTargetPosition(targetValue);
             rightMotor.setTargetPosition(targetValue);
