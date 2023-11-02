@@ -18,7 +18,8 @@ public class ClawControl{
     private Telemetry t = null;
     //servo fields
     private Servo clawServo = null;
-    private Servo pitchServo = null; //controls the pitch of the claw on the arm
+    private Servo pitchLeft = null; //controls the pitch of the claw on the arm
+    private Servo pitchRight = null;
     //claw constants
     private boolean open;
     private double pitch = 0; //position of pitch servo
@@ -35,9 +36,11 @@ public class ClawControl{
     private void initHardware() {
         //get servo from id
         clawServo = hardwareMap.get(Servo.class, "claw");
-        pitchServo = hardwareMap.get(Servo.class, "pitch");
+        pitchLeft = hardwareMap.get(Servo.class, "leftPitch");
+        pitchRight = hardwareMap.get(Servo.class, "rightPitch");
 
         //reverse direction
+        pitchLeft.setDirection(Servo.Direction.REVERSE);
     }
 
     //initialize claw control mechanism
@@ -57,12 +60,12 @@ public class ClawControl{
 
 
     //open the claw servo
-    private void open() {
+    public void open() {
         clawServo.setPosition(1);
     }
 
     //close the claw servo
-    private void close() {
+    public void close() {
         clawServo.setPosition(0);
     }
 
@@ -95,7 +98,22 @@ public class ClawControl{
             }
 
             //rotate servo to pitch angle
-            pitchServo.setPosition(pitch);
+            rotateTo(pitch);
+        }
+    }
+
+    //rotate to a certain angle
+    public void rotateTo(double angle) {
+        if(status) {
+            if (pitch > 1) {
+                pitch = 1;
+            }
+            if (pitch < 0) {
+                pitch = 0;
+            }
+
+            pitchLeft.setPosition(pitch);
+            pitchRight.setPosition(pitch);
         }
     }
 }

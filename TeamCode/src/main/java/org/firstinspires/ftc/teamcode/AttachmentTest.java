@@ -11,15 +11,16 @@ public class AttachmentTest extends OpMode {
 
     //FIELDS
     private ArmControl Arm = null;
-    //private ClawControl claw = null;
+    private ClawControl Claw = null;
     //private LauncherControl launcher = null;
 
 
     @Override
     public void init() {
         Arm = new ArmControl(hardwareMap, telemetry);
-        Arm.init();
-        //claw = new ClawControl(hardwareMap, telemetry);
+        //Arm.init();
+        Claw = new ClawControl(hardwareMap, telemetry);
+        Claw.init();
         // = new LauncherControl(hardwareMap, telemetry);
     }
 
@@ -27,10 +28,13 @@ public class AttachmentTest extends OpMode {
     public void loop() {
         //attachments only give telemetry and are not initialized
         Arm.telemetryOutput();
-        Arm.goToTargetRotation(90);
+        //Arm.goToTargetRotation(90);
         //Arm.rotate(-0.1);
 
-        //claw.telemetryOutput();
+        Claw.telemetryOutput();
+        Claw.rotateTo(0.5);
+        Claw.open();
+
         //launcher.telemetryOutput();
         telemetry.update();
     }
