@@ -18,7 +18,7 @@ public class AttachmentTest extends OpMode {
     @Override
     public void init() {
         Arm = new ArmControl(hardwareMap, telemetry);
-        //Arm.init();
+        Arm.init();
         Claw = new ClawControl(hardwareMap, telemetry);
         Claw.init();
         // = new LauncherControl(hardwareMap, telemetry);
@@ -28,7 +28,7 @@ public class AttachmentTest extends OpMode {
     public void loop() {
         //attachments only give telemetry and are not initialized
         Arm.telemetryOutput();
-        //Arm.goToTargetRotation(90);
+        Arm.goToTargetRotation(90);
         //Arm.rotate(-0.1);
 
         Claw.telemetryOutput();

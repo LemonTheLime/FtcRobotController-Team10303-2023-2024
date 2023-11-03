@@ -2,12 +2,14 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.teamcode.attachments.ArmControl;
 import org.firstinspires.ftc.teamcode.attachments.ClawControl;
 import org.firstinspires.ftc.teamcode.attachments.LauncherControl;
 
-public class TeleOp extends OpMode {
+@TeleOp(name="TeleOpMode")
+public class TeleOpMode extends OpMode {
 
     //FIELDS
     //drivetrain
@@ -20,7 +22,7 @@ public class TeleOp extends OpMode {
     //arm
     private ArmControl Arm = null;
     private double armRotation;
-    private double armSpeed = 0.01;
+    private double armSpeed = 0.5;
     //claw
     private ClawControl Claw = null;
     private double pitchRotation;
@@ -69,6 +71,7 @@ public class TeleOp extends OpMode {
         readPlayerInputs();
         runDrivetrain();
         runAttachments();
+        telemetryOutput();
     }
 
     //runs motors for the drivetrain
@@ -128,7 +131,7 @@ public class TeleOp extends OpMode {
         leftRearPower *= speedRatio;
 
         //gamepad2 - attachments
-        armRotation = -gamepad2.left_stick_y; //moving stick up will flip the arm out
+        armRotation = gamepad2.left_stick_y; //moving stick up will flip the arm out
         pitchRotation = -gamepad2.right_stick_y; //moving stick up will flip the claw out
 
         //open or close claw - click "a" once
@@ -149,5 +152,13 @@ public class TeleOp extends OpMode {
         } else {
             runLauncher = false;
         }
+    }
+
+    //telemetry
+    private void telemetryOutput() {
+        Arm.telemetryOutput();
+        Claw.telemetryOutput();
+        Launcher.telemetryOutput();
+        telemetry.update();
     }
 }

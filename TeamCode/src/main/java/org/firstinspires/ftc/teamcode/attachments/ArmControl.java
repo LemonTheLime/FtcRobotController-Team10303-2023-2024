@@ -20,7 +20,7 @@ public class ArmControl{
     private DcMotor leftMotor = null;
     private DcMotor rightMotor = null;
     private int ticksPerRev = 288;
-    private double power = 0.05;
+    private double power = 0.2;
     private int leftEncoderValue;
     private int rightEncoderValue;
     //rotation constants
@@ -29,7 +29,7 @@ public class ArmControl{
     private double targetRotation = offset; //target rotation
     private double maxRotation = offset; //arm starts off here
     private double minRotation = -14.6;
-    private double gearRatio = 26.0 / 15.0;
+    private double gearRatio = 32.0 / 10.0;
 
     //CONSTRUCTOR
     public ArmControl(HardwareMap hwMap, Telemetry t) {
@@ -90,8 +90,10 @@ public class ArmControl{
             rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             //power motors (move motor towards target position)
-            leftMotor.setPower(power);
-            rightMotor.setPower(power);
+            //experimental power factor
+            double powerFactor = 1;//(1 - Math.sin(toRadians(rotation)));
+            leftMotor.setPower(power * powerFactor + 0.0005);
+            rightMotor.setPower(power * powerFactor + 0.0005);
         }
     }
 
@@ -99,7 +101,7 @@ public class ArmControl{
     private void getEncoderValues() {
         leftEncoderValue = leftMotor.getCurrentPosition();
         rightEncoderValue = rightMotor.getCurrentPosition();
-        rotation = offset + (double)leftEncoderValue / ticksPerRev * 360.0;
+        rotation = offset + (double)leftEncoderValue / ticksPerRev * 360.0 / gearRatio;
     }
 
     //rotates the target arm angle
@@ -115,5 +117,10 @@ public class ArmControl{
 
         //rotate the arm to the target
         goToTargetRotation(targetRotation);
+    }
+
+    //toRadians
+    private double toRadians(double degrees) {
+        return degrees * Math.PI / 180;
     }
 }
