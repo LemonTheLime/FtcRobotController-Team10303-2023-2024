@@ -22,7 +22,7 @@ public class TeleOpMode extends OpMode {
     //arm
     private ArmControl Arm = null;
     private double armRotation;
-    private double armSpeed = 0.5;
+    private double armSpeed = 1.5;
     //claw
     private ClawControl Claw = null;
     private double pitchRotation;

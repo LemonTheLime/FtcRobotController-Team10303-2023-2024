@@ -20,11 +20,11 @@ public class ArmControl{
     private DcMotor leftMotor = null;
     private DcMotor rightMotor = null;
     private int ticksPerRev = 288;
-    private double power = 0.2;
+    private double power = 0.6;
     private int leftEncoderValue;
     private int rightEncoderValue;
     //rotation constants
-    private double offset = 194.3; //offset angle (starting angle)
+    private double offset = 185.3; //offset angle (starting angle)
     private double rotation; //current angle in degrees, 0 is terminal x axis
     private double targetRotation = offset; //target rotation
     private double maxRotation = offset; //arm starts off here
