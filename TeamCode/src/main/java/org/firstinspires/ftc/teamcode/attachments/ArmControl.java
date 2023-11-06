@@ -20,7 +20,7 @@ public class ArmControl{
     private DcMotor leftMotor = null;
     private DcMotor rightMotor = null;
     private int ticksPerRev = 288;
-    private double power = 0.7;
+    private double power = 0.6;
     private int leftEncoderValue;
     private int rightEncoderValue;
     //rotation constants
@@ -127,8 +127,9 @@ public class ArmControl{
     private double powerFunction(double rawPower) {
         double powerFactor = (1 - Math.sin(toRadians(rotation)));
         //powerFactor = 1;
-        double minPower = 0.4;
+        double minPower = 0.6;
         double finalPower = rawPower * powerFactor * (1 - minPower) + minPower;
-        return (finalPower);
+        return rawPower;
+        //return (finalPower);
     }
 }

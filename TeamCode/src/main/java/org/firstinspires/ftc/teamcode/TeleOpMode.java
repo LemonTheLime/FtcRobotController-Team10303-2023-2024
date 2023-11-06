@@ -18,11 +18,12 @@ public class TeleOpMode extends OpMode {
     private DcMotor rightFront = null;
     private DcMotor rightRear = null;
     double leftFrontPower, rightFrontPower, leftRearPower, rightRearPower;
-    double speedRatio = 1.0;
+    double speedRatio = 0.75;
+    double rotationRatio = 0.90;
     //arm
     private ArmControl Arm = null;
     private double armRotation;
-    private double armSpeed = 3.0;
+    private double armSpeed = 1.5;
     //claw
     private ClawControl Claw = null;
     private double pitchRotation;
@@ -105,9 +106,9 @@ public class TeleOpMode extends OpMode {
         //gamepad1 - drivetrain
         double max;
         // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-        double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-        double lateral =  gamepad1.left_stick_x;
-        double yaw     =  gamepad1.right_stick_x;
+        double axial   = gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+        double lateral = -gamepad1.left_stick_x;
+        double yaw     = gamepad1.right_stick_x * rotationRatio;
         // Combine the joystick requests for each axis-motion to determine each wheel's power.
         // Set up a variable for each drive wheel to save the power level for telemetry.
         leftFrontPower  = axial + lateral + yaw;
