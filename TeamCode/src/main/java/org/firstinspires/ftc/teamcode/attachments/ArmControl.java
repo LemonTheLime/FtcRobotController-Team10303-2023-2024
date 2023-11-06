@@ -20,15 +20,15 @@ public class ArmControl{
     private DcMotor leftMotor = null;
     private DcMotor rightMotor = null;
     private int ticksPerRev = 288;
-    private double power = 0.6;
+    private double power = 0.7;
     private int leftEncoderValue;
     private int rightEncoderValue;
     //rotation constants
-    private double offset = 185.3; //offset angle (starting angle)
+    private double offset = 180.0; //offset angle (starting angle)
     private double rotation; //current angle in degrees, 0 is terminal x axis
     private double targetRotation = offset; //target rotation
     private double maxRotation = offset; //arm starts off here
-    private double minRotation = -14.6;
+    private double minRotation = -20.0;
     private double gearRatio = 32.0 / 10.0;
 
     //CONSTRUCTOR
@@ -91,9 +91,8 @@ public class ArmControl{
 
             //power motors (move motor towards target position)
             //experimental power factor
-            double powerFactor = 1;//(1 - Math.sin(toRadians(rotation)));
-            leftMotor.setPower(power * powerFactor + 0.0005);
-            rightMotor.setPower(power * powerFactor + 0.0005);
+            leftMotor.setPower(powerFunction(power));
+            rightMotor.setPower(powerFunction(power));
         }
     }
 
@@ -122,5 +121,14 @@ public class ArmControl{
     //toRadians
     private double toRadians(double degrees) {
         return degrees * Math.PI / 180;
+    }
+
+    //power function
+    private double powerFunction(double rawPower) {
+        double powerFactor = (1 - Math.sin(toRadians(rotation)));
+        //powerFactor = 1;
+        double minPower = 0.4;
+        double finalPower = rawPower * powerFactor * (1 - minPower) + minPower;
+        return (finalPower);
     }
 }

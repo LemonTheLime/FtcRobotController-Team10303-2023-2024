@@ -22,11 +22,11 @@ public class TeleOpMode extends OpMode {
     //arm
     private ArmControl Arm = null;
     private double armRotation;
-    private double armSpeed = 1.5;
+    private double armSpeed = 3.0;
     //claw
     private ClawControl Claw = null;
     private double pitchRotation;
-    private double pitchSpeed = 0.01;
+    private double pitchSpeed = 0.02;
     private boolean changeClaw = false;
     //launcher
     private LauncherControl Launcher = null;
@@ -151,6 +151,11 @@ public class TeleOpMode extends OpMode {
             runLauncher = true;
         } else {
             runLauncher = false;
+        }
+
+        //press x to set pitch servo to ground
+        if(gamepad2.x) {
+            Claw.rotateToGround();
         }
     }
 
