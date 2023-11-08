@@ -19,7 +19,7 @@ public class TeleOpMode extends OpMode {
     private DcMotor rightRear = null;
     double leftFrontPower, rightFrontPower, leftRearPower, rightRearPower;
     double speedRatio = 0.75;
-    double rotationRatio = 0.90;
+    double rotationRatio = 0.67;
     //arm
     private ArmControl Arm = null;
     private double armRotation;
@@ -106,8 +106,8 @@ public class TeleOpMode extends OpMode {
         //gamepad1 - drivetrain
         double max;
         // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-        double axial   = gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-        double lateral = -gamepad1.left_stick_x;
+        double axial   = gamepad1.left_stick_y * speedRatio;  // Note: pushing stick forward gives negative value
+        double lateral = -gamepad1.left_stick_x * speedRatio;
         double yaw     = gamepad1.right_stick_x * rotationRatio;
         // Combine the joystick requests for each axis-motion to determine each wheel's power.
         // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -126,13 +126,9 @@ public class TeleOpMode extends OpMode {
             leftRearPower   /= max;
             rightRearPower  /= max;
         }
-        leftFrontPower *= speedRatio;
-        rightFrontPower *= speedRatio;
-        leftRearPower *= speedRatio;
-        leftRearPower *= speedRatio;
 
         //gamepad2 - attachments
-        armRotation = gamepad2.left_stick_y; //moving stick up will flip the arm out
+        armRotation = -gamepad2.left_stick_y; //moving stick up will flip the arm out
         pitchRotation = -gamepad2.right_stick_y; //moving stick up will flip the claw out
 
         //open or close claw - click "a" once
@@ -147,16 +143,23 @@ public class TeleOpMode extends OpMode {
             lastKeyPressed = "none";
         }
 
-        //hold b for launcher
-        if(gamepad2.b) {
+        //hold b for launcher (both needed)
+        if(gamepad1.b && gamepad2.b) {
             runLauncher = true;
         } else {
             runLauncher = false;
         }
 
         //press x to set pitch servo to ground
-        if(gamepad2.x) {
-            Claw.rotateToGround();
+        if(gamepad2.x && !gamepad2.y) {
+            Claw.ground();
+            Arm.ground();
+        }
+
+        //press y to reset
+        if(gamepad2.y && !gamepad2.x) {
+            Arm.reset();
+            Claw.reset();
         }
     }
 

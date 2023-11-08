@@ -20,7 +20,7 @@ public class ArmControl{
     private DcMotor leftMotor = null;
     private DcMotor rightMotor = null;
     private int ticksPerRev = 288;
-    private double power = 0.6;
+    private double power = 0.8;
     private int leftEncoderValue;
     private int rightEncoderValue;
     //rotation constants
@@ -28,7 +28,7 @@ public class ArmControl{
     private double rotation; //current angle in degrees, 0 is terminal x axis
     private double targetRotation = offset; //target rotation
     private double maxRotation = offset; //arm starts off here
-    private double minRotation = -20.0;
+    private double minRotation = -23.0;
     private double gearRatio = 32.0 / 10.0;
 
     //CONSTRUCTOR
@@ -115,6 +115,18 @@ public class ArmControl{
         }
 
         //rotate the arm to the target
+        goToTargetRotation(targetRotation);
+    }
+
+    //rotates arm to ground
+    public void ground() {
+        targetRotation = minRotation;
+        goToTargetRotation(targetRotation);
+    }
+
+    //reset arm
+    public void reset() {
+        targetRotation = maxRotation;
         goToTargetRotation(targetRotation);
     }
 

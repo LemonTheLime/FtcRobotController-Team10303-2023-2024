@@ -23,7 +23,7 @@ public class ClawControl{
     //claw constants
     private boolean open;
     private double pitch = 0; //position of pitch servo
-    private double groundPitch = 0.7156;
+    private double groundPitch = 0.81;
 
     //CONSTRUCTOR
     public ClawControl(HardwareMap hwMap, Telemetry t) {
@@ -119,9 +119,18 @@ public class ClawControl{
     }
 
     //ground pitch
-    public void rotateToGround() {
+    public void ground() {
         if(status) {
             pitch = groundPitch;
+            pitchLeft.setPosition(pitch);
+            pitchRight.setPosition(pitch);
+        }
+    }
+
+    //reset pitch
+    public void reset() {
+        if(status) {
+            pitch = 0;
             pitchLeft.setPosition(pitch);
             pitchRight.setPosition(pitch);
         }
