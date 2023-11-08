@@ -24,6 +24,8 @@ public class ClawControl{
     private boolean open;
     private double pitch = 0; //position of pitch servo
     private double groundPitch = 0.81;
+    private double min = 0.85;
+    private double max = 1.0;
 
     //CONSTRUCTOR
     public ClawControl(HardwareMap hwMap, Telemetry t) {
@@ -62,12 +64,12 @@ public class ClawControl{
 
     //open the claw servo
     public void open() {
-        clawServo.setPosition(1);
+        clawServo.setPosition(min);
     }
 
     //close the claw servo
     public void close() {
-        clawServo.setPosition(0);
+        clawServo.setPosition(max);
     }
 
     //change the claw servo position
