@@ -28,7 +28,7 @@ public class ArmControl{
     private double rotation; //current angle in degrees, 0 is terminal x axis
     private double targetRotation = offset; //target rotation
     private double maxRotation = offset; //arm starts off here
-    private double minRotation = -23.0;
+    private double minRotation = -30.0;
     private double gearRatio = 32.0 / 10.0;
 
     //CONSTRUCTOR
@@ -139,9 +139,16 @@ public class ArmControl{
     private double powerFunction(double rawPower) {
         double powerFactor = (1 - Math.sin(toRadians(rotation)));
         //powerFactor = 1;
-        double minPower = 0.6;
-        double finalPower = rawPower * powerFactor * (1 - minPower) + minPower;
-        return rawPower;
-        //return (finalPower);
+        double minPower = 0.5;
+        double maxPower = 0.75;
+        double finalPower = rawPower * powerFactor * (maxPower - minPower) + minPower;
+        //return rawPower;
+        return (finalPower);
+    }
+
+    //reset the encoders
+    public void resetEncoder() {
+        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 }

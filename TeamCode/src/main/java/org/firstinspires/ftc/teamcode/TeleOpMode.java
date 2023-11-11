@@ -152,6 +152,7 @@ public class TeleOpMode extends OpMode {
 
         //press x to set pitch servo to ground
         if(gamepad2.x && !gamepad2.y) {
+            Claw.close();
             Claw.ground();
             Arm.ground();
         }
@@ -160,6 +161,11 @@ public class TeleOpMode extends OpMode {
         if(gamepad2.y && !gamepad2.x) {
             Arm.reset();
             Claw.reset();
+        }
+
+        //press the up button to reset encoders
+        if(gamepad2.dpad_up) {
+            Arm.resetEncoder();
         }
     }
 
