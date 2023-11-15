@@ -20,7 +20,7 @@ public class ArmControl{
     private DcMotor leftMotor = null;
     private DcMotor rightMotor = null;
     private int ticksPerRev = 288;
-    private double power = 0.8;
+    private double power = 0.99;
     private int leftEncoderValue;
     private int rightEncoderValue;
     //rotation constants
@@ -30,6 +30,7 @@ public class ArmControl{
     private double maxRotation = offset; //arm starts off here
     private double minRotation = -30.0;
     private double gearRatio = 32.0 / 10.0;
+    private double deliverRotation = 38.19;
 
     //CONSTRUCTOR
     public ArmControl(HardwareMap hwMap, Telemetry t) {
@@ -142,13 +143,19 @@ public class ArmControl{
         double minPower = 0.5;
         double maxPower = 0.75;
         double finalPower = rawPower * powerFactor * (maxPower - minPower) + minPower;
-        //return rawPower;
-        return (finalPower);
+        return rawPower;
+        //return (finalPower);
     }
 
     //reset the encoders
     public void resetEncoder() {
         leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    //set to deliver rotation
+    public void deliver() {
+        targetRotation = deliverRotation;
+        goToTargetRotation(targetRotation);
     }
 }

@@ -167,6 +167,11 @@ public class TeleOpMode extends OpMode {
         if(gamepad2.dpad_up) {
             Arm.resetEncoder();
         }
+
+        //press right d-pad to prepare to drop pixel
+        if(gamepad2.dpad_right) {
+            Arm.deliver();
+        }
     }
 
     //telemetry
