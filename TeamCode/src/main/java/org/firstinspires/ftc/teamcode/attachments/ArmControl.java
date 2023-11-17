@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.attachments;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -17,10 +18,11 @@ public class ArmControl{
     //telemetry
     private Telemetry t = null;
     //motor fields
-    private DcMotor leftMotor = null;
-    private DcMotor rightMotor = null;
+    private DcMotorEx leftMotor = null;
+    private DcMotorEx rightMotor = null;
     private int ticksPerRev = 288;
     private double power = 0.99;
+    private int armVelocity = 300;
     private int leftEncoderValue;
     private int rightEncoderValue;
     //rotation constants
@@ -43,8 +45,8 @@ public class ArmControl{
     //initialize motor hardware
     private void initHardware() {
         //get motors from ids
-        leftMotor = hardwareMap.get(DcMotor.class, "leftArm");
-        rightMotor = hardwareMap.get(DcMotor.class, "rightArm");
+        leftMotor = hardwareMap.get(DcMotorEx.class, "leftArm");
+        rightMotor = hardwareMap.get(DcMotorEx.class, "rightArm");
 
         //reverse motors here if needed:
         //arm rotating out should negative encoder changes for both motors
@@ -92,8 +94,10 @@ public class ArmControl{
 
             //power motors (move motor towards target position)
             //experimental power factor
-            leftMotor.setPower(powerFunction(power));
-            rightMotor.setPower(powerFunction(power));
+            //leftMotor.setPower(powerFunction(power));
+            //rightMotor.setPower(powerFunction(power));
+            leftMotor.setVelocity(armVelocity);
+            rightMotor.setVelocity(armVelocity);
         }
     }
 
@@ -101,7 +105,7 @@ public class ArmControl{
     private void getEncoderValues() {
         leftEncoderValue = leftMotor.getCurrentPosition();
         rightEncoderValue = rightMotor.getCurrentPosition();
-        rotation = offset + (double)leftEncoderValue / ticksPerRev * 360.0 / gearRatio;
+        rotation = offset + (double)rightEncoderValue / ticksPerRev * 360.0 / gearRatio;
     }
 
     //rotates the target arm angle
