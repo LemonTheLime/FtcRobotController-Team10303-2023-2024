@@ -24,6 +24,8 @@ public class ClawControl{
     private boolean open;
     private double pitch = 0; //position of pitch servo
     private double groundPitch = 0.737;
+    private double deliverPitch = 0.6;
+    private double autoDeliverPitch = 0.78;
     private double min = 0.85;
     private double max = 1.0;
 
@@ -133,6 +135,24 @@ public class ClawControl{
     public void reset() {
         if(status) {
             pitch = 0;
+            pitchLeft.setPosition(pitch);
+            pitchRight.setPosition(pitch);
+        }
+    }
+
+    //deliver pitch for teleop
+    public void deliver() {
+        if(status) {
+            pitch = deliverPitch;
+            pitchLeft.setPosition(pitch);
+            pitchRight.setPosition(pitch);
+        }
+    }
+
+    //deliver pitch for autonomous
+    public void autoDeliver() {
+        if(status) {
+            pitch = autoDeliverPitch;
             pitchLeft.setPosition(pitch);
             pitchRight.setPosition(pitch);
         }

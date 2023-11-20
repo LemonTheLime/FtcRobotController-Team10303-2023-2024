@@ -33,6 +33,7 @@ public class ArmControl{
     private double minRotation = -30.0;
     private double gearRatio = 32.0 / 10.0;
     private double deliverRotation = 38.19;
+    private double autoDeliverRotation = 5;
 
     //CONSTRUCTOR
     public ArmControl(HardwareMap hwMap, Telemetry t) {
@@ -157,9 +158,25 @@ public class ArmControl{
         rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    //set to deliver rotation
+    //set to deliver rotation for teleop
     public void deliver() {
         targetRotation = deliverRotation;
         goToTargetRotation(targetRotation);
+    }
+
+    //set to deliver rotation for autonomous
+    public void autoDeliver() {
+        targetRotation = autoDeliverRotation;
+        goToTargetRotation(targetRotation);
+    }
+
+    //waits until the arm has delivered for autonomous
+    public boolean finishedDelivery() {
+        double tolerance = 5;
+        getEncoderValues();
+        if(Math.abs(rotation - targetRotation) < tolerance) {
+            return true;
+        }
+        return false;
     }
 }
