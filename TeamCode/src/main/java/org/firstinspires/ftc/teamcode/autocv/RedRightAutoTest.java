@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.autocv;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.attachments.ClawControl;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 //this program starts on the red right side and follows middle pixel protocol
-@Autonomous(name="RedRightMiddlePixel")
-public class RedRightMiddlePixel extends LinearOpMode {
+@Autonomous(name="RedRightAutoTest")
+public class RedRightAutoTest extends LinearOpMode {
     private ArmControl Arm = null;
     private ClawControl Claw = null;
     private int spikeMark = 3;
@@ -170,7 +170,7 @@ public class RedRightMiddlePixel extends LinearOpMode {
                 .lineToSplineHeading(new Pose2d(-16.5, 0, Math.toRadians(45)))
                 .build();
         lTraj1prime = drive.trajectoryBuilder(lTraj1.end())
-                .back(11.5)
+                .back(11.1)
                 .build();
         lTraj2 = drive.trajectoryBuilder(lTraj1prime.end())
                 .lineToSplineHeading(new Pose2d(-15, 0, Math.toRadians(-90)))
@@ -179,10 +179,10 @@ public class RedRightMiddlePixel extends LinearOpMode {
                 .back(29)
                 .build();
         lTraj4 = drive.trajectoryBuilder(lTraj3.end())
-                .strafeRight(22)
+                .strafeRight(22.5)
                 .build();
         lTraj5 = drive.trajectoryBuilder(lTraj4.end())
-                .strafeLeft(33)
+                .strafeLeft(33.5)
                 .build();
         lTraj6 = drive.trajectoryBuilder(lTraj5.end())
                 .back(16)

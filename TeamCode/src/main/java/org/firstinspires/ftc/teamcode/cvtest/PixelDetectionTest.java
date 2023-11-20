@@ -27,7 +27,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.cvtest;
+
+
+import android.util.Size;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -48,21 +51,11 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "Concept: TensorFlow Object Detection", group = "Concept")
-public class ConceptTensorFlowObjectDetection extends LinearOpMode {
+@Disabled
+@TeleOp(name = "PixelDetectionTest")
+public class PixelDetectionTest extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
-
-    // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
-    // this is only used for Android Studio when using models in Assets.
-    private static final String TFOD_MODEL_ASSET = "MyModelStoredAsAsset.tflite";
-    // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
-    // this is used when uploading models directly to the RC using the model upload interface.
-    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/myCustomModel.tflite";
-    // Define the labels recognized in the model for TFOD (must be in training order!)
-    private static final String[] LABELS = {
-       "Pixel",
-    };
 
     /**
      * The variable to store our instance of the TensorFlow Object Detection processor.
@@ -85,6 +78,11 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
+        sleep(2000); //wait 2 seconds
+        //check for pixel
+        checkForPixel();
+
+        /*
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
@@ -105,10 +103,38 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
             }
         }
 
+
+         */
+
+        //allow time to check hub
+        sleep(10000);
+
         // Save more CPU resources when camera is no longer needed.
         visionPortal.close();
 
     }   // end runOpMode()
+
+
+    //checks for a pixel
+    private void checkForPixel() {
+        int i = 0;
+        int num = 1000;
+        boolean detected = false;
+        while(opModeIsActive() && (i < num && !detected)) {
+            List<Recognition> currentRecognitions = tfod.getRecognitions();
+            if (currentRecognitions.size() != 0) {
+                //there is a pixel
+                telemetry.addLine("Found pixel");
+                telemetry.addData("Number of attempts: ", i);
+                detected = true;
+            }
+            i++;
+        }
+        if(!detected) {
+            telemetry.addLine("Nothing detected: ");
+        }
+        telemetry.update();
+    }
 
     /**
      * Initialize the TensorFlow Object Detection processor.
@@ -147,7 +173,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
         }
 
         // Choose a camera resolution. Not all cameras support all resolutions.
-        //builder.setCameraResolution(new Size(640, 480));
+        builder.setCameraResolution(new Size(640, 480));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         //builder.enableLiveView(true);

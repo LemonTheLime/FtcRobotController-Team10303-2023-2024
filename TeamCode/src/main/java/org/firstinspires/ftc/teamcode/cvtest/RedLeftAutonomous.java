@@ -27,11 +27,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.cvtest;
 
-
-import android.util.Size;
-
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -39,6 +39,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
@@ -52,10 +53,21 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @Disabled
-@TeleOp(name = "PixelDetectionTest")
-public class PixelDetectionTest extends LinearOpMode {
+@Autonomous(name = "RedLeftAutonomous")
+public class RedLeftAutonomous extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
+
+    // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
+    // this is only used for Android Studio when using models in Assets.
+    private static final String TFOD_MODEL_ASSET = "MyModelStoredAsAsset.tflite";
+    // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
+    // this is used when uploading models directly to the RC using the model upload interface.
+    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/myCustomModel.tflite";
+    // Define the labels recognized in the model for TFOD (must be in training order!)
+    private static final String[] LABELS = {
+       "Pixel",
+    };
 
     /**
      * The variable to store our instance of the TensorFlow Object Detection processor.
@@ -67,20 +79,63 @@ public class PixelDetectionTest extends LinearOpMode {
      */
     private VisionPortal visionPortal;
 
+    //pixel location, 0: left, 1: middle, 2: right
+    int pixelLocation = 4;
+
     @Override
     public void runOpMode() {
 
+        //build roadrunner paths
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        //trajectories are flipped direction
+
+        Trajectory toMiddlePixelTraj = drive.trajectoryBuilder(new Pose2d())
+                .back(20.5)
+                .build();
+
+        Trajectory toLeftPixelTraj1 = drive.trajectoryBuilder(new Pose2d())
+                .strafeRight(13)
+                .build();
+
+        Trajectory toLeftPixelTraj2 = drive.trajectoryBuilder(new Pose2d())
+                .forward(3)
+                .build();
+
+        //init tensorflow
         initTfod();
 
-        // Wait for the DS start button to be touched.
-        telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
-        telemetry.addData(">", "Touch Play to start OpMode");
-        telemetry.update();
+        //wait for start
         waitForStart();
 
-        sleep(2000); //wait 2 seconds
-        //check for pixel
-        checkForPixel();
+        //drive to back spike mark
+        drive.followTrajectory(toMiddlePixelTraj);
+
+        //read the pixel
+        sleep(1000);
+        telemetry.addLine("Reading...");
+        telemetry.update();
+        //telemetryTfod();
+        checkForMidPixel();
+
+        /*
+        //if pixel not found, continue search
+        if(pixelLocation != 1) {
+            drive.followTrajectory(toLeftPixelTraj);
+        }
+
+        //read the pixel
+        checkForLeftPixel();
+
+        //if pixel not found, it must be on the right
+        if(pixelLocation != 0) {
+            pixelLocation = 2;
+        }
+        */
+
+
+
+        sleep(5000);
 
         /*
         if (opModeIsActive()) {
@@ -92,40 +147,56 @@ public class PixelDetectionTest extends LinearOpMode {
                 telemetry.update();
 
                 // Save CPU resources; can resume streaming when needed.
+
                 if (gamepad1.dpad_down) {
                     visionPortal.stopStreaming();
                 } else if (gamepad1.dpad_up) {
                     visionPortal.resumeStreaming();
                 }
 
+
+
                 // Share the CPU.
                 sleep(20);
             }
         }
-
-
-         */
-
-        //allow time to check hub
-        sleep(10000);
+        */
 
         // Save more CPU resources when camera is no longer needed.
         visionPortal.close();
 
     }   // end runOpMode()
 
-
-    //checks for a pixel
-    private void checkForPixel() {
+    //check for left pixel
+    private void checkForLeftPixel() {
         int i = 0;
         int num = 1000;
         boolean detected = false;
         while(opModeIsActive() && (i < num && !detected)) {
             List<Recognition> currentRecognitions = tfod.getRecognitions();
             if (currentRecognitions.size() != 0) {
-                //there is a pixel
+                //there is a middle pixel
                 telemetry.addLine("Found pixel");
                 telemetry.addData("Number of attempts: ", i);
+                pixelLocation = 0;
+                detected = true;
+            }
+            i++;
+        }
+    }
+
+    //checks for the middle pixel
+    private void checkForMidPixel() {
+        int i = 0;
+        int num = 1000;
+        boolean detected = false;
+        while(opModeIsActive() && (i < num && !detected)) {
+            List<Recognition> currentRecognitions = tfod.getRecognitions();
+            if (currentRecognitions.size() != 0) {
+                //there is a middle pixel
+                telemetry.addLine("Found pixel");
+                telemetry.addData("Number of attempts: ", i);
+                pixelLocation = 1;
                 detected = true;
             }
             i++;
@@ -173,7 +244,7 @@ public class PixelDetectionTest extends LinearOpMode {
         }
 
         // Choose a camera resolution. Not all cameras support all resolutions.
-        builder.setCameraResolution(new Size(640, 480));
+        //builder.setCameraResolution(new Size(640, 480));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         //builder.enableLiveView(true);
@@ -193,7 +264,7 @@ public class PixelDetectionTest extends LinearOpMode {
         visionPortal = builder.build();
 
         // Set confidence threshold for TFOD recognitions, at any time.
-        tfod.setMinResultConfidence(0.30f);
+        tfod.setMinResultConfidence(0.50f);
 
         // Disable or re-enable the TFOD processor at any time.
         //visionPortal.setProcessorEnabled(tfod, true);
