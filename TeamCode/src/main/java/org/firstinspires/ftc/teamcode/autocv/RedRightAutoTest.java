@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.autocv;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -166,25 +167,34 @@ public class RedRightAutoTest extends LinearOpMode {
 
     //build left pixel trajectories
     private void buildLeftPixelTraj() {
+        //position to push purple pixel to the left
         lTraj1 = drive.trajectoryBuilder(new Pose2d())
                 .lineToSplineHeading(new Pose2d(-16.5, 0, Math.toRadians(45)))
                 .build();
         lTraj1prime = drive.trajectoryBuilder(lTraj1.end())
                 .back(11.1)
                 .build();
+        //spline back
         lTraj2 = drive.trajectoryBuilder(lTraj1prime.end())
-                .lineToSplineHeading(new Pose2d(-15, 0, Math.toRadians(-90)))
+                .lineToSplineHeading(new Pose2d(-15, 0, Math.toRadians(0)))
                 .build();
-        lTraj3 = drive.trajectoryBuilder(lTraj2.end())
-                .back(29)
+        //spline to the backdrop, activate arm 1 second in
+        lTraj3 = drive.trajectoryBuilder(lTraj2.end(), true)
+                .splineTo(new Vector2d(-36, 30), Math.toRadians(90))
+                .addTemporalMarker(1, () -> {
+                    Arm.autoDeliver();
+                    Claw.autoDeliver();
+                })
                 .build();
+        //start to close arm and begin to park
         lTraj4 = drive.trajectoryBuilder(lTraj3.end())
-                .strafeRight(22.5)
+                .strafeLeft(33.5)
+                .addTemporalMarker(0, () -> {
+                    Arm.reset();
+                    Claw.reset();
+                })
                 .build();
         lTraj5 = drive.trajectoryBuilder(lTraj4.end())
-                .strafeLeft(33.5)
-                .build();
-        lTraj6 = drive.trajectoryBuilder(lTraj5.end())
                 .back(16)
                 .build();
     }
@@ -195,26 +205,19 @@ public class RedRightAutoTest extends LinearOpMode {
         drive.followTrajectory(lTraj1);
         drive.followTrajectory(lTraj1prime);
         drive.followTrajectory(lTraj2);
+
+        //start arm while moving to backdrop
         drive.followTrajectory(lTraj3);
-        drive.followTrajectory(lTraj4);
 
-        //deliver the pixel
-        Arm.autoDeliver();
-        Claw.autoDeliver();
+        //wait for arm to deliver and open claw
         waitForArm();
-
-        //open the arm
         Claw.open();
         sleep(1000);
 
-        //retract
-        Arm.reset();
-        Claw.reset();
-        waitForArm();
-
-        //park
+        //retract and park
+        drive.followTrajectory(lTraj4);
         drive.followTrajectory(lTraj5);
-        drive.followTrajectory(lTraj6);
+        waitForArm();
     }
 
     //wait for the arm and claw to deliver

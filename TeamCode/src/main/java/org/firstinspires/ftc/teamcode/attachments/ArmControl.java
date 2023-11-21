@@ -32,7 +32,7 @@ public class ArmControl{
     private double maxRotation = offset; //arm starts off here
     private double minRotation = -30.0;
     private double gearRatio = 32.0 / 10.0;
-    private double deliverRotation = 38.19;
+    private double deliverRotation = 40;
     private double autoDeliverRotation = 5;
 
     //CONSTRUCTOR
