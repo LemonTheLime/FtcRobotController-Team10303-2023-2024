@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 public class RedRightAutoTest extends LinearOpMode {
     private ArmControl Arm = null;
     private ClawControl Claw = null;
-    private int spikeMark = 3;
+    private int spikeMark = 1;
 
     //trajectory fields
     private SampleMecanumDrive drive;
@@ -67,24 +67,35 @@ public class RedRightAutoTest extends LinearOpMode {
 
     //build right pixel trajectories
     private void buildRightPixelTraj() {
+        //place purple pixel
         rTraj1 = drive.trajectoryBuilder(new Pose2d())
                 .lineToSplineHeading(new Pose2d(-26.5, 3, Math.toRadians(-25)))
                 .build();
+        //move back
         rTraj2 = drive.trajectoryBuilder(rTraj1.end())
                 .lineToSplineHeading(new Pose2d(-15, 0, Math.toRadians(-90)))
                 .build();
-        rTraj3 = drive.trajectoryBuilder(rTraj2.end())
-                .back(29)
+        //move to backdrop and start the arm
+        rTraj3 = drive.trajectoryBuilder(rTraj2.end(), true)
+                .splineTo(new Vector2d(-22, 30), Math.toRadians(90))
+                .addTemporalMarker(1, () -> {
+                    Arm.autoDeliver();
+                    Claw.autoDeliver();
+                })
                 .build();
+        //retract and park
         rTraj4 = drive.trajectoryBuilder(rTraj3.end())
-                .strafeRight(7)
+                .strafeLeft(18.5)
+                .addTemporalMarker(0, () -> {
+                    Arm.reset();
+                    Claw.reset();
+                })
                 .build();
         rTraj5 = drive.trajectoryBuilder(rTraj4.end())
-                .strafeLeft(18.5)
-                .build();
-        rTraj6 = drive.trajectoryBuilder(rTraj5.end())
                 .back(17)
                 .build();
+
+
     }
 
     //follow right pixel trajectories
@@ -92,26 +103,18 @@ public class RedRightAutoTest extends LinearOpMode {
         //deliver purple pixel
         drive.followTrajectory(rTraj1);
         drive.followTrajectory(rTraj2);
+        //move to backdrop
         drive.followTrajectory(rTraj3);
-        drive.followTrajectory(rTraj4);
 
-        //deliver the pixel
-        Arm.autoDeliver();
-        Claw.autoDeliver();
         waitForArm();
-
-        //open the arm
+        //open the claw
         Claw.open();
         sleep(1000);
 
-        //retract
-        Arm.reset();
-        Claw.reset();
-        waitForArm();
-
-        //park
+        //retract and park
+        drive.followTrajectory(rTraj4);
         drive.followTrajectory(rTraj5);
-        drive.followTrajectory(rTraj6);
+        waitForArm();
     }
 
     //build middle pixel trajectories
