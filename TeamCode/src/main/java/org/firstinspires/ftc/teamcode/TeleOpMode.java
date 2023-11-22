@@ -30,6 +30,7 @@ public class TeleOpMode extends OpMode {
     private double pitchSpeed = 0.02;
     private boolean changeLeftClaw = false;
     private boolean changeRightClaw = false;
+    private boolean changeAllClaw = false;
     //launcher
     private LauncherControl Launcher = null;
     private boolean runLauncher = false;
@@ -37,7 +38,6 @@ public class TeleOpMode extends OpMode {
     private String lastKeyPressed = "";
 
 
-    @Override
     public void init() {
         //init drivetrain hardware
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
@@ -66,7 +66,6 @@ public class TeleOpMode extends OpMode {
         Launcher.init();
     }
 
-    @Override
     //Teleop directly controls the drivetrain because autonomous is separate
     public void loop() {
         readPlayerInputs();
@@ -87,7 +86,7 @@ public class TeleOpMode extends OpMode {
     private void runAttachments() {
         //run arm
         Arm.rotate(armRotation * armSpeed);
-        //run claw
+        //run claws
         Claw.rotate(pitchRotation * pitchSpeed);
         if(changeLeftClaw) {
             changeLeftClaw = false;
@@ -96,6 +95,11 @@ public class TeleOpMode extends OpMode {
         if(changeRightClaw) {
             changeRightClaw = false;
             Claw.changeRight();
+        }
+        if(changeAllClaw) {
+            //change both claws
+            changeAllClaw = false;
+            Claw.changeBothClaw();
         }
         //run launcher
         if(runLauncher) {
@@ -187,11 +191,17 @@ public class TeleOpMode extends OpMode {
                 changeRightClaw = true;
             }
         }
-
+        //either open or close both claws
+        if(gamepad2.dpad_down) {
+            if(lastKeyPressed.equals("none")) {
+                lastKeyPressed = "dpad_down";
+                changeAllClaw = true;
+            }
+        }
 
 
         //gamepad2 single button press reset
-        if(!gamepad2.a && !gamepad2.x && !gamepad2.y && !gamepad2.dpad_left && !gamepad2.dpad_right && !gamepad2.dpad_up) {
+        if(!gamepad2.a && !gamepad2.x && !gamepad2.y && !gamepad2.dpad_left && !gamepad2.dpad_right && !gamepad2.dpad_up && !gamepad2.dpad_down) {
             lastKeyPressed = "none";
         }
     }

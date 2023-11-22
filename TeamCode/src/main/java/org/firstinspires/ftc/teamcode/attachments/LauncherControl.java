@@ -54,14 +54,18 @@ public class LauncherControl{
 
     //run the servo
     public void run() {
-        running = true;
-        launcher.setPower(power);
+        if(status) {
+            running = true;
+            launcher.setPower(power);
+        }
     }
 
     //stop the servo
     public void stop() {
-        running = false;
-        launcher.setPower(0);
+        if(status) {
+            running = false;
+            launcher.setPower(0);
+        }
     }
 
 }

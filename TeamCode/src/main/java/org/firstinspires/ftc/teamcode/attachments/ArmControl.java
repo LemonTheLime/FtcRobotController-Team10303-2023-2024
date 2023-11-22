@@ -107,46 +107,49 @@ public class ArmControl {
 
     //gets encoder values from motors and calculates rotation
     private void getEncoderValues() {
-        leftEncoderValue = leftMotor.getCurrentPosition();
-        rightEncoderValue = rightMotor.getCurrentPosition();
-        rotation = offset + (double)rightEncoderValue / ticksPerRev * 360.0 / gearRatio;
+        if(status) {
+            leftEncoderValue = leftMotor.getCurrentPosition();
+            rightEncoderValue = rightMotor.getCurrentPosition();
+            rotation = offset + (double) rightEncoderValue / ticksPerRev * 360.0 / gearRatio;
+        }
     }
 
     //rotates the target arm angle
     public void rotate(double angle) {
-        //set the targetRotation
-        targetRotation += angle;
-        if(targetRotation < minRotation) {
-            targetRotation = minRotation;
-        }
-        if(targetRotation > maxRotation) {
-            targetRotation = maxRotation;
-        }
+        if(status) {
+            //set the targetRotation
+            targetRotation += angle;
+            if (targetRotation < minRotation) {
+                targetRotation = minRotation;
+            }
+            if (targetRotation > maxRotation) {
+                targetRotation = maxRotation;
+            }
 
-        //rotate the arm to the target
-        goToTargetRotation(targetRotation);
+            //rotate the arm to the target
+            goToTargetRotation(targetRotation);
+        }
     }
 
     //rotates arm to ground
     public void ground() {
-        targetRotation = minRotation;
-        goToTargetRotation(targetRotation);
+        if(status) {
+            targetRotation = minRotation;
+            goToTargetRotation(targetRotation);
+        }
     }
 
     //reset arm
     public void reset() {
-        targetRotation = maxRotation;
-        goToTargetRotation(targetRotation);
-    }
-
-    //toRadians
-    private double toRadians(double degrees) {
-        return degrees * Math.PI / 180;
+        if(status) {
+            targetRotation = maxRotation;
+            goToTargetRotation(targetRotation);
+        }
     }
 
     //power function
     private double powerFunction(double rawPower) {
-        double powerFactor = (1 - Math.sin(toRadians(rotation)));
+        double powerFactor = (1 - Math.sin(Math.toRadians(rotation)));
         //powerFactor = 1;
         double minPower = 0.5;
         double maxPower = 0.75;
@@ -157,28 +160,37 @@ public class ArmControl {
 
     //reset the encoders
     public void resetEncoder() {
-        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        if(status) {
+            leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
     }
 
     //set to deliver rotation for teleop
     public void deliver() {
-        targetRotation = deliverRotation;
-        goToTargetRotation(targetRotation);
+        if(status) {
+            targetRotation = deliverRotation;
+            goToTargetRotation(targetRotation);
+        }
     }
 
     //set to deliver rotation for autonomous
     public void autoDeliver() {
-        targetRotation = autoDeliverRotation;
-        goToTargetRotation(targetRotation);
+        if(status) {
+            targetRotation = autoDeliverRotation;
+            goToTargetRotation(targetRotation);
+        }
     }
 
     //waits until the arm has delivered for autonomous
     public boolean finishedDelivery() {
-        double tolerance = 5;
-        getEncoderValues();
-        if(Math.abs(rotation - targetRotation) < tolerance) {
-            return true;
+        if(status) {
+            double tolerance = 5;
+            getEncoderValues();
+            if (Math.abs(rotation - targetRotation) < tolerance) {
+                return true;
+            }
+            return false;
         }
         return false;
     }

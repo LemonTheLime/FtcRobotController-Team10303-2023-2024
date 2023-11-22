@@ -24,20 +24,15 @@ public class ClawControl {
     //claw constants
     private boolean leftOpen = false;
     private boolean rightOpen = false;
-    private double leftMin = 0.85;
+    private double leftMin = 0.0;
     private double leftMax = 1.0;
-    private double rightMin = 0.85;
+    private double rightMin = 0.;
     private double rightMax = 1.0;
     //pitch constants
     private double pitch = 0; //position of pitch servo
     private double groundPitch = 0.737;
     private double deliverPitch = 0.6;
     private double autoDeliverPitch = 0.82;
-    //fields to be deprecated
-    private Servo clawServo = null;
-    private boolean open;
-    private double min = 0.85;
-    private double max = 1.0;
 
 
 
@@ -60,10 +55,6 @@ public class ClawControl {
         //reverse direction
         pitchLeft.setDirection(Servo.Direction.REVERSE);
         leftClaw.setDirection(Servo.Direction.REVERSE);
-
-        //to be deprecated
-        clawServo = hardwareMap.get(Servo.class, "claw");
-
     }
 
     //initialize claw control mechanism
@@ -85,10 +76,20 @@ public class ClawControl {
 
 
     //open left claw
-    private void openLeftClaw() {leftClaw.setPosition(leftMin);}
+    public void openLeftClaw() {
+        if(status) {
+            leftClaw.setPosition(leftMin);
+            leftOpen = true;
+        }
+    }
 
     //close left claw
-    private void closeLeftClaw() {leftClaw.setPosition(leftMax);}
+    public void closeLeftClaw() {
+        if(status) {
+            leftClaw.setPosition(leftMax);
+            leftOpen = false;
+        }
+    }
 
     //change left claw
     public void changeLeft() {
@@ -103,10 +104,20 @@ public class ClawControl {
     }
 
     //open right claw
-    private void openRightClaw() {rightClaw.setPosition(rightMin);}
+    public void openRightClaw() {
+        if(status) {
+            rightClaw.setPosition(rightMin);
+            rightOpen = true;
+        }
+    }
 
     //close right claw
-    private void closeRightClaw() {rightClaw.setPosition(rightMax);}
+    public void closeRightClaw() {
+        if(status) {
+            rightClaw.setPosition(rightMax);
+            rightOpen = false;
+        }
+    }
 
     //change right claw
     public void changeRight() {
@@ -120,30 +131,26 @@ public class ClawControl {
         }
     }
 
-
-    /* * * * To be deprecated * * * */
-    //open the claw servo
-    public void open() {
-        clawServo.setPosition(min);
-    }
-
-    //close the claw servo
-    public void close() {
-        clawServo.setPosition(max);
-    }
-
-    //change the claw servo position
-    public void changeClaw() {
+    //change both claws
+    //if both claws in same state, reverse both
+    //if one open and other close, close both
+    public void changeBothClaw() {
         if(status) {
-            open = !open;
-            if (open) {
-                open();
+            if(leftOpen && rightOpen) {
+                //if both open, close both
+                closeLeftClaw();
+                closeRightClaw();
+            } else if(!leftOpen && !rightOpen) {
+                //if both close, open both
+                openLeftClaw();
+                openRightClaw();
             } else {
-                close();
+                //close both
+                closeLeftClaw();
+                closeRightClaw();
             }
         }
     }
-    /* * * * * * * */
 
 
     //pitch servo uses a finite state machine to be able to run with the motors

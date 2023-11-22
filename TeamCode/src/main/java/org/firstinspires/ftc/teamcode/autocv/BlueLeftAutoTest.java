@@ -51,7 +51,7 @@ public class BlueLeftAutoTest extends LinearOpMode {
         //init attachments
         Arm.init();
         Claw.init();
-        Claw.close();
+        //Claw.close();
         sleep(1000);
 
         if(spikeMark == 1) {
@@ -100,7 +100,7 @@ public class BlueLeftAutoTest extends LinearOpMode {
         waitForArm();
 
         //open the arm
-        Claw.open();
+        //Claw.open();
         sleep(1000);
 
         //retract
@@ -151,7 +151,7 @@ public class BlueLeftAutoTest extends LinearOpMode {
         waitForArm();
 
         //open the arm
-        Claw.open();
+        //Claw.open();
         sleep(1000);
 
         //retract
@@ -204,7 +204,7 @@ public class BlueLeftAutoTest extends LinearOpMode {
         waitForArm();
 
         //open the arm
-        Claw.open();
+        //Claw.open();
         sleep(1000);
 
         //retract

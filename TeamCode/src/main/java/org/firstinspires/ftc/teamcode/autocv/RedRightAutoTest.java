@@ -52,7 +52,7 @@ public class RedRightAutoTest extends LinearOpMode {
         //init attachments
         Arm.init();
         Claw.init();
-        Claw.close();
+        //Claw.close();
         sleep(1000);
 
         if(spikeMark == 1) {
@@ -108,7 +108,7 @@ public class RedRightAutoTest extends LinearOpMode {
 
         waitForArm();
         //open the claw
-        Claw.open();
+        //Claw.open();
         sleep(1000);
 
         //retract and park
@@ -155,7 +155,7 @@ public class RedRightAutoTest extends LinearOpMode {
         waitForArm();
 
         //open the arm
-        Claw.open();
+        //Claw.open();
         sleep(1000);
 
         //retract
@@ -214,7 +214,7 @@ public class RedRightAutoTest extends LinearOpMode {
 
         //wait for arm to deliver and open claw
         waitForArm();
-        Claw.open();
+        //Claw.open();
         sleep(1000);
 
         //retract and park

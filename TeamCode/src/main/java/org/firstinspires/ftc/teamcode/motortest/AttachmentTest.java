@@ -35,7 +35,7 @@ public class AttachmentTest extends OpMode {
 
         Claw.telemetryOutput();
         Claw.rotateTo(0.5);
-        Claw.open();
+        //Claw.open();
 
         //launcher.telemetryOutput();
         telemetry.update();
