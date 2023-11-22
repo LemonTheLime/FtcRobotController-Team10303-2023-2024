@@ -28,13 +28,13 @@ public class TeleOpMode extends OpMode {
     private ClawControl Claw = null;
     private double pitchRotation;
     private double pitchSpeed = 0.02;
-    private boolean changeClaw = false;
+    private boolean changeLeftClaw = false;
+    private boolean changeRightClaw = false;
     //launcher
     private LauncherControl Launcher = null;
     private boolean runLauncher = false;
     //gamepads
     private String lastKeyPressed = "";
-    private boolean buttonPressed = false;
 
 
     @Override
@@ -89,9 +89,13 @@ public class TeleOpMode extends OpMode {
         Arm.rotate(armRotation * armSpeed);
         //run claw
         Claw.rotate(pitchRotation * pitchSpeed);
-        if(changeClaw) {
-            changeClaw = false;
-            Claw.changeClaw();
+        if(changeLeftClaw) {
+            changeLeftClaw = false;
+            Claw.changeLeft();
+        }
+        if(changeRightClaw) {
+            changeRightClaw = false;
+            Claw.changeRight();
         }
         //run launcher
         if(runLauncher) {
@@ -131,18 +135,6 @@ public class TeleOpMode extends OpMode {
         armRotation = -gamepad2.left_stick_y; //moving stick up will flip the arm out
         pitchRotation = -gamepad2.right_stick_y; //moving stick up will flip the claw out
 
-        //open or close claw - click "a" once
-        if(gamepad2.a) {
-            if(lastKeyPressed.equals("none")) {
-                lastKeyPressed = "a";
-                changeClaw = true;
-            }
-        }
-        //gamepad2 single button press reset
-        if(!gamepad2.a) {
-            lastKeyPressed = "none";
-        }
-
         //hold b for launcher (both needed)
         if(gamepad1.b && gamepad2.b) {
             runLauncher = true;
@@ -150,27 +142,57 @@ public class TeleOpMode extends OpMode {
             runLauncher = false;
         }
 
-        //press x to set pitch servo to ground
-        if(gamepad2.x && !gamepad2.y) {
-            Claw.close();
-            Claw.ground();
-            Arm.ground();
+        //SINGLE PRESS BUTTONS
+        //arm prepares to drop pixel
+        if(gamepad2.a) {
+            if(lastKeyPressed.equals("none")) {
+                lastKeyPressed = "a";
+                Arm.deliver();
+            }
         }
-
-        //press y to reset
-        if(gamepad2.y && !gamepad2.x) {
-            Arm.reset();
-            Claw.reset();
+        //arm to ground state
+        if(gamepad2.x) {
+            if(lastKeyPressed.equals("none")) {
+                lastKeyPressed = "x";
+                Claw.ground();
+                Arm.ground();
+            }
         }
-
-        //press the up button to reset encoders
+        //arm to reset state
+        if(gamepad2.y) {
+            if(lastKeyPressed.equals("none")) {
+                lastKeyPressed = "y";
+                Arm.reset();
+                Claw.reset();
+            }
+        }
+        //reset arm encoders
         if(gamepad2.dpad_up) {
-            Arm.resetEncoder();
+            if(lastKeyPressed.equals("none")) {
+                lastKeyPressed = "dpad_up";
+                Arm.resetEncoder();
+            }
+        }
+        //change left claw
+        if(gamepad2.dpad_left) {
+            if(lastKeyPressed.equals("none")) {
+                lastKeyPressed = "dpad_left";
+                changeLeftClaw = true;
+            }
+        }
+        //change right claw
+        if(gamepad2.dpad_right) {
+            if(lastKeyPressed.equals("none")) {
+                lastKeyPressed = "dpad_right";
+                changeRightClaw = true;
+            }
         }
 
-        //press right d-pad to prepare to drop pixel
-        if(gamepad2.dpad_right) {
-            Arm.deliver();
+
+
+        //gamepad2 single button press reset
+        if(!gamepad2.a && !gamepad2.x && !gamepad2.y && !gamepad2.dpad_left && !gamepad2.dpad_right && !gamepad2.dpad_up) {
+            lastKeyPressed = "none";
         }
     }
 

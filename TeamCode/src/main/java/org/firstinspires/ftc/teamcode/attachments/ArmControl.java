@@ -8,20 +8,21 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 /* ArmControl
  * runs the arm attachment of the robot
  */
-public class ArmControl{
+public class ArmControl {
 
     //FIELDS
     //hardware map
     private HardwareMap hardwareMap = null;
-    //arm status
+    //attachment status
     private boolean status;
     //telemetry
     private Telemetry t = null;
-    //motor fields
+    //hardware fields
     private DcMotorEx leftMotor = null;
     private DcMotorEx rightMotor = null;
+    //motor specific constants
     private int ticksPerRev = 288;
-    private double power = 0.99;
+    private double gearRatio = 32.0 / 10.0;
     private int armVelocity = 300;
     private int leftEncoderValue;
     private int rightEncoderValue;
@@ -31,9 +32,11 @@ public class ArmControl{
     private double targetRotation = offset; //target rotation
     private double maxRotation = offset; //arm starts off here
     private double minRotation = -30.0;
-    private double gearRatio = 32.0 / 10.0;
     private double deliverRotation = 40;
     private double autoDeliverRotation = 5;
+    //deprecated
+    private double power = 0.99;
+
 
     //CONSTRUCTOR
     public ArmControl(HardwareMap hwMap, Telemetry t) {
