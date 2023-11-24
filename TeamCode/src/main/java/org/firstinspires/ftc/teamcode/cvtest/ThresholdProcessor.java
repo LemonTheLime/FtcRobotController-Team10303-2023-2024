@@ -34,6 +34,9 @@ public class ThresholdProcessor implements VisionProcessor {
     //color mode, 0 = red, 1 = blue, 3 = red2 (other end of spectrum)
     private int mode = 0;
 
+    //combined red
+    private Mat red1 = new Mat();
+    private Mat red2 = new Mat();
 
 
     @Override
@@ -45,6 +48,7 @@ public class ThresholdProcessor implements VisionProcessor {
     public Object processFrame(Mat frame, long captureTimeNanos) {
         Imgproc.cvtColor(frame, frame, Imgproc.COLOR_RGB2HSV);
 
+
         //threshold
         if(mode == 1) {
             Core.inRange(frame, redLowHSV, redHighHSV, frame);
@@ -53,6 +57,12 @@ public class ThresholdProcessor implements VisionProcessor {
             Core.inRange(frame, blueLowHSV, blueHighHSV, frame);
         } else if(mode == 3) {
             Core.inRange(frame, redLowHSV2, redHighHSV2, frame);
+        } else {
+            //combine both reds
+            Core.inRange(frame, redLowHSV, redHighHSV, red1);
+            Core.inRange(frame, redLowHSV2, redHighHSV2, red2);
+            Core.bitwise_or(red1, red2, frame);
+
         }
 
         return null; // No context object

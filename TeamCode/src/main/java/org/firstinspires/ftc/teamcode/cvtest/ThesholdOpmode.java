@@ -56,7 +56,7 @@ public class ThesholdOpmode extends LinearOpMode {
                 if(lastKeyPressed.equals("none")) {
                     lastKeyPressed = "y";
                     thresholdProcessor.setColorMode(ThresholdProcessor.ElementColor.NONE);
-                    telemetry.addLine("No Threshold");
+                    telemetry.addLine("Combined Threshold");
                     telemetry.update();
                 }
             }
