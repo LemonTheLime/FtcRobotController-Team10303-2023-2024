@@ -16,7 +16,7 @@ public class GridBlock {
     private DetectionProcessor.DetectionColor detectionColor = null;
     private Rect openCVRect;
     //threshold fields
-    private final double PERCENT_THRESHOLD = 0.25;
+    private final double PERCENT_THRESHOLD = 0.10;
     private double currentThreshold;
     private Mat blockMat = new Mat(); //stores the mat object for the image inside this block
     private Mat threshMat = new Mat(); //stores the final threshed blockMat
@@ -27,7 +27,7 @@ public class GridBlock {
     private android.graphics.Rect canvasRect;
     private int edgeColor = Color.GREEN;
     //blue scalars
-    private Scalar blueLowHSV = new Scalar(90, 140, 20);
+    private Scalar blueLowHSV = new Scalar(90, 50, 20);
     private Scalar blueHighHSV = new Scalar(140, 255, 255);
     //red scalars (2 ends of spectrum)
     private Scalar redLowHSV = new Scalar(0, 20, 20);

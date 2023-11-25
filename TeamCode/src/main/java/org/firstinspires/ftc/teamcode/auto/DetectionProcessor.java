@@ -29,7 +29,7 @@ public class DetectionProcessor implements VisionProcessor {
     private int blockHeight;
     private ArrayList<GridBlock> blockList;
     //blue scalars
-    private Scalar blueLowHSV = new Scalar(90, 140, 20);
+    private Scalar blueLowHSV = new Scalar(90, 50, 20);
     private Scalar blueHighHSV = new Scalar(140, 255, 255);
     //red scalars (2 ends of spectrum)
     private Scalar redLowHSV = new Scalar(0, 20, 20);
