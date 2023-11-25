@@ -112,6 +112,11 @@ public class DetectionProcessor implements VisionProcessor {
         }
     }
 
+    //scans 1000 times (or maybe more) for the spikemark location
+    public int scanForSpikeMark() {
+        return 1;
+    }
+
     //enum for detection color
     public enum DetectionColor {
         RED,
