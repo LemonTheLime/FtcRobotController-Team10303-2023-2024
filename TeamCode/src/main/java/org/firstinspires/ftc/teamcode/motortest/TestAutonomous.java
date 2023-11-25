@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @Disabled
-@Autonomous(name="TestAutonomous")
+@Autonomous(name = "TestAutonomous", group = "Motor Testing")
 public class TestAutonomous extends LinearOpMode {
 
     @Override

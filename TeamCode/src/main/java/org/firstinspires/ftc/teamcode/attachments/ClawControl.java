@@ -34,9 +34,7 @@ public class ClawControl {
     private double deliverPitch = 0.6;
     private double autoDeliverPitch = 0.82;
 
-
-
-    //CONSTRUCTOR
+    //constructor
     public ClawControl(HardwareMap hwMap, Telemetry t) {
         status = false;
         this.t = t;
@@ -64,16 +62,13 @@ public class ClawControl {
 
     //telemetry
     public void telemetryOutput() {
-        //telemetry
         t.addLine("ClawControl: ");
         t.addData("status", status);
-        //t.addData("open", open);
         t.addData("leftOpen", leftOpen);
         t.addData("rightOpen", rightOpen);
         t.addData("pitch", pitch);
         t.addLine();
     }
-
 
     //open left claw
     public void openLeftClaw() {
@@ -152,7 +147,6 @@ public class ClawControl {
         }
     }
 
-
     //pitch servo uses a finite state machine to be able to run with the motors
     //rotates the pitch servo
     public void rotate(double angle) {
@@ -174,8 +168,7 @@ public class ClawControl {
         }
     }
 
-
-    //rotate to a certain angle
+    //rotate pitch to a certain angle
     public void rotateTo(double angle) {
         if(status) {
             if (pitch > 1) {

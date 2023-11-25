@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.attachments.ArmControl;
 import org.firstinspires.ftc.teamcode.attachments.ClawControl;
 import org.firstinspires.ftc.teamcode.attachments.LauncherControl;
 
-@TeleOp(name="TeleOpMode")
+@TeleOp(name = "TeleOpMode")
 public class TeleOpMode extends OpMode {
 
     //FIELDS

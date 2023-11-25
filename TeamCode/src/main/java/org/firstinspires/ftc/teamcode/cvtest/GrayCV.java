@@ -8,7 +8,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Disabled
-@Autonomous(name="GrayCV")
+@Autonomous(name = "GrayCV", group = "CV Test")
 public class GrayCV extends LinearOpMode {
 
     private GrayProcessor grayProcessor = null;

@@ -23,7 +23,7 @@ public class ArmControl {
     //motor specific constants
     private int ticksPerRev = 288;
     private double gearRatio = 32.0 / 10.0;
-    private int armVelocity = 300;
+    private int armVelocity = 300; //ticks per second
     private int leftEncoderValue;
     private int rightEncoderValue;
     //rotation constants
@@ -32,13 +32,10 @@ public class ArmControl {
     private double targetRotation = offset; //target rotation
     private double maxRotation = offset; //arm starts off here
     private double minRotation = -30.0;
-    private double deliverRotation = 40;
-    private double autoDeliverRotation = 5;
-    //deprecated
-    private double power = 0.99;
+    private double deliverRotation = 40; //teleop
+    private double autoDeliverRotation = 5; //autonomous
 
-
-    //CONSTRUCTOR
+    //constructor
     public ArmControl(HardwareMap hwMap, Telemetry t) {
         status = false;
         this.t = t;
@@ -53,7 +50,7 @@ public class ArmControl {
         rightMotor = hardwareMap.get(DcMotorEx.class, "rightArm");
 
         //reverse motors here if needed:
-        //arm rotating out should negative encoder changes for both motors
+        //arm rotating out should be negative encoder changes for both motors
         rightMotor.setDirection(DcMotor.Direction.REVERSE);
 
         //set motors to run with encoders
@@ -61,7 +58,6 @@ public class ArmControl {
         rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
     }
 
     //initialize arm control mechanism
@@ -71,7 +67,6 @@ public class ArmControl {
 
     //telemetry
     public void telemetryOutput() {
-        //telemetry
         getEncoderValues();
         t.addLine("ArmControl: ");
         t.addData("status", status);
@@ -82,13 +77,15 @@ public class ArmControl {
         t.addLine();
     }
 
-    //goes to target position
+    //rotates arm to target position
     public void goToTargetRotation(double angle) {
         if(status) {
             //get encoder targets
             getEncoderValues();
             int targetValue = (int)(ticksPerRev / 360.0 * (angle - offset) * gearRatio);
             t.addData("targetValue", targetValue);
+
+            //set motor targets
             leftMotor.setTargetPosition(targetValue);
             rightMotor.setTargetPosition(targetValue);
 
@@ -96,10 +93,7 @@ public class ArmControl {
             leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            //power motors (move motor towards target position)
-            //experimental power factor
-            //leftMotor.setPower(powerFunction(power));
-            //rightMotor.setPower(powerFunction(power));
+            //set motor velocities
             leftMotor.setVelocity(armVelocity);
             rightMotor.setVelocity(armVelocity);
         }
@@ -114,7 +108,7 @@ public class ArmControl {
         }
     }
 
-    //rotates the target arm angle
+    //rotates the target arm by an angle change
     public void rotate(double angle) {
         if(status) {
             //set the targetRotation
@@ -131,7 +125,7 @@ public class ArmControl {
         }
     }
 
-    //rotates arm to ground
+    //preset arm rotation to ground
     public void ground() {
         if(status) {
             targetRotation = minRotation;
@@ -139,7 +133,7 @@ public class ArmControl {
         }
     }
 
-    //reset arm
+    //preset arm rotation to the starting state
     public void reset() {
         if(status) {
             targetRotation = maxRotation;
@@ -147,18 +141,7 @@ public class ArmControl {
         }
     }
 
-    //power function
-    private double powerFunction(double rawPower) {
-        double powerFactor = (1 - Math.sin(Math.toRadians(rotation)));
-        //powerFactor = 1;
-        double minPower = 0.5;
-        double maxPower = 0.75;
-        double finalPower = rawPower * powerFactor * (maxPower - minPower) + minPower;
-        return rawPower;
-        //return (finalPower);
-    }
-
-    //reset the encoders
+    //reset the encoders (arm should be at reset state)
     public void resetEncoder() {
         if(status) {
             leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -166,7 +149,7 @@ public class ArmControl {
         }
     }
 
-    //set to deliver rotation for teleop
+    //preset arm rotation for delivering pixel to backdrop in teleop
     public void deliver() {
         if(status) {
             targetRotation = deliverRotation;
@@ -174,7 +157,7 @@ public class ArmControl {
         }
     }
 
-    //set to deliver rotation for autonomous
+    //preset arm rotation for delivering pixel to backdrop in autonomous
     public void autoDeliver() {
         if(status) {
             targetRotation = autoDeliverRotation;
@@ -185,7 +168,7 @@ public class ArmControl {
     //waits until the arm has delivered for autonomous
     public boolean finishedDelivery() {
         if(status) {
-            double tolerance = 5;
+            double tolerance = 5; //degree tolerance
             getEncoderValues();
             if (Math.abs(rotation - targetRotation) < tolerance) {
                 return true;

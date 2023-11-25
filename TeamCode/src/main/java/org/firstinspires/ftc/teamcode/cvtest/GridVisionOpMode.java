@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 
-@Autonomous(name="GridVisionOpmode")
+@Autonomous(name = "GridVisionOpMode", group = "CV Test")
 public class GridVisionOpMode extends LinearOpMode {
 
     private GridVisionProcessor gridVisionProcessor = null;

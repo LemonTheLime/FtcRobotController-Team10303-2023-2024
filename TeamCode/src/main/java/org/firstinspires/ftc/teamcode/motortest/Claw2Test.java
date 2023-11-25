@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.motortest;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="Claw2Test")
+@Disabled
+@TeleOp(name = "Claw2Test", group = "Motor Testing")
 public class Claw2Test extends OpMode {
 
     //fields

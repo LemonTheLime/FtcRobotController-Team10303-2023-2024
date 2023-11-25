@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.attachments.ClawControl;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 //this program starts on the red right side and follows middle pixel protocol
-@Autonomous(name="BlueLeftAutoTest")
+@Autonomous(name = "BlueLeftAutoTest")
 public class BlueLeftAutoTest extends LinearOpMode {
     private ArmControl Arm = null;
     private ClawControl Claw = null;

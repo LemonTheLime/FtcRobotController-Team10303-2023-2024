@@ -1,14 +1,13 @@
 package org.firstinspires.ftc.teamcode.cvtest;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 
-@Autonomous(name="ThresholdOpmode")
-public class ThesholdOpmode extends LinearOpMode {
+@Autonomous(name="ThresholdOpMode", group = "CV Test")
+public class ThesholdOpMode extends LinearOpMode {
 
     private ThresholdProcessor thresholdProcessor = null;
 

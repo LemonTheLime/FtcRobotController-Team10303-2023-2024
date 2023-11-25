@@ -21,7 +21,7 @@ public class LauncherControl{
     private double power = 1.0;
     private boolean running;
 
-    //CONSTRUCTOR
+    //constructor
     public LauncherControl(HardwareMap hwMap, Telemetry t) {
         status = false;
         this.t = t;
@@ -45,7 +45,6 @@ public class LauncherControl{
 
     //telemetry
     public void telemetryOutput() {
-        //telemetry
         t.addLine("LauncherControl: ");
         t.addData("status", status);
         t.addData("running", running);
@@ -67,5 +66,4 @@ public class LauncherControl{
             launcher.setPower(0);
         }
     }
-
 }

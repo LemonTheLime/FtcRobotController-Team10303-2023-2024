@@ -8,8 +8,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Disabled
-@Autonomous(name="LearnVisionOpmode")
-public class LearnVisionOpmode extends LinearOpMode {
+@Autonomous(name = "LearnVisionOpMode", group = "CV Test")
+public class LearnVisionOpMode extends LinearOpMode {
     private LearnVisionProcessor learnVisionProcessor = null;
 
     private VisionPortal visionPortal = null;

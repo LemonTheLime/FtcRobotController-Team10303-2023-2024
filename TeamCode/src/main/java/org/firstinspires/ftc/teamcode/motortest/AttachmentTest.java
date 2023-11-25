@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.attachments.ClawControl;
 import org.firstinspires.ftc.teamcode.attachments.LauncherControl;
 
 @Disabled
-@TeleOp(name="AttachmentTest", group = "Testing")
+@TeleOp(name = "AttachmentTest", group = "Motor Testing")
 public class AttachmentTest extends OpMode {
 
     //FIELDS

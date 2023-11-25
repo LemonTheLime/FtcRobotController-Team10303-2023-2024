@@ -1,16 +1,15 @@
-package org.firstinspires.ftc.teamcode.autopark;
+package org.firstinspires.ftc.teamcode.autoparkonly;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-//this program starts on the red right side and only parks in the corner
-@Autonomous(name="RedRightAutoParkOnly")
-public class RedRightAutoParkOnly extends LinearOpMode {
+//this program starts on the blue left side and only parks in the corner
+@Autonomous(name = "ParkOnlyBlueLeft", group = "Park Only")
+public class BlueLeftAutoParkOnly extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //build roadrunner paths
@@ -21,7 +20,7 @@ public class RedRightAutoParkOnly extends LinearOpMode {
                 .back(3)
                 .build();
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
-                .strafeLeft(48)
+                .strafeRight(48)
                 .build();
 
         waitForStart();
