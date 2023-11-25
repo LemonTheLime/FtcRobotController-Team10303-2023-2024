@@ -28,8 +28,6 @@ public class DetectionProcessor implements VisionProcessor {
     private int blockWidth;
     private int blockHeight;
     private ArrayList<GridBlock> blockList;
-    private ArrayList<GridBlock> detectedBlocks;
-    private ArrayList<GridBlock> undetectedBlocks;
     //blue scalars
     private Scalar blueLowHSV = new Scalar(90, 140, 20);
     private Scalar blueHighHSV = new Scalar(140, 255, 255);
@@ -71,25 +69,22 @@ public class DetectionProcessor implements VisionProcessor {
         //convert frame to HSV
         Imgproc.cvtColor(frame, frame, Imgproc.COLOR_RGB2HSV);
 
-        detectedBlocks = new ArrayList<GridBlock>();
-        undetectedBlocks = new ArrayList<GridBlock>();
-        //process all the blocks and sort them into their respective lists
+        //process all the blocks
         for(GridBlock gb : blockList) {
             gb.processBlock(frame);
-            if(gb.isDetected()) {
-                detectedBlocks.add(gb);
-            } else {
-                undetectedBlocks.add(gb);
-            }
         }
 
         //threshold camera stream for viewer
         if(detectionColor == DetectionColor.BLUE) {
             Core.inRange(frame, blueLowHSV, blueHighHSV, frame);
         } else if(detectionColor == DetectionColor.RED) {
+            //combine thresholds
             Core.inRange(frame, redLowHSV, redHighHSV, red1);
             Core.inRange(frame, redLowHSV2, redHighHSV2, red2);
             Core.bitwise_or(red1, red2, frame);
+            //cleanup
+            red1.release();
+            red2.release();
         }
         return null;
     }
@@ -99,17 +94,21 @@ public class DetectionProcessor implements VisionProcessor {
         Paint rectPaint = new Paint();
         rectPaint.setColor(Color.BLUE);
         rectPaint.setStyle(Paint.Style.STROKE);
-        rectPaint.setStrokeWidth(scaleCanvasDensity * 4);
+        rectPaint.setStrokeWidth(scaleCanvasDensity * 2);
 
         //draw undetected blocks first
-        for(GridBlock gb : undetectedBlocks) {
-            rectPaint.setColor(gb.getEdgeColor());
-            canvas.drawRect(gb.constructCanvasElem(scaleBmpPxToCanvasPx), rectPaint);
+        for(GridBlock gb : blockList) {
+            if(!gb.isDetected()) {
+                rectPaint.setColor(gb.getEdgeColor());
+                canvas.drawRect(gb.constructCanvasElem(scaleBmpPxToCanvasPx), rectPaint);
+            }
         }
-        //draw detected blocks
-        for(GridBlock gb : detectedBlocks) {
-            rectPaint.setColor(gb.getEdgeColor());
-            canvas.drawRect(gb.constructCanvasElem(scaleBmpPxToCanvasPx), rectPaint);
+        //draw detected blocks second
+        for(GridBlock gb : blockList) {
+            if(gb.isDetected()) {
+                rectPaint.setColor(gb.getEdgeColor());
+                canvas.drawRect(gb.constructCanvasElem(scaleBmpPxToCanvasPx), rectPaint);
+            }
         }
     }
 

@@ -69,10 +69,17 @@ public class GridBlock {
         if(detectionColor == DetectionProcessor.DetectionColor.BLUE) {
             Core.inRange(blockMat, blueLowHSV, blueHighHSV, threshMat);
         } else if(detectionColor == DetectionProcessor.DetectionColor.RED) {
+            //join both thresholds
             Core.inRange(blockMat, redLowHSV, redHighHSV, red1);
             Core.inRange(blockMat, redLowHSV2, redHighHSV2, red2);
             Core.bitwise_or(red1, red2, threshMat);
+            //cleanup
+            red1.release();
+            red2.release();
         }
+
+        //cleanup blockmat
+        blockMat.release();
 
         //calculate threshold percentage
         currentThreshold = Core.sumElems(threshMat).val[0] / openCVRect.area() / 255;
@@ -83,6 +90,9 @@ public class GridBlock {
             colorIsDetected = false;
             edgeColor = Color.GREEN;
         }
+
+        //cleanup threshmat
+        threshMat.release();
 
     }
 
