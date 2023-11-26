@@ -51,9 +51,12 @@ public class RedLeftPurpleOnly extends LinearOpMode {
          * It will then set the according position for the pixel deliveries
          */
 
-        detectionProcessor = new DetectionProcessor(30, 30, DetectionProcessor.DetectionColor.RED, telemetry);
+        detectionProcessor = new DetectionProcessor(30, 30, DetectionProcessor.DetectionColor.RED, DetectionProcessor.RelativePos.LEFT, telemetry);
         visionPortal = VisionPortal.easyCreateWithDefaults(
                 hardwareMap.get(WebcamName.class, "Webcam 1"), detectionProcessor);
+
+        //wait for camera processor
+        waitForProcessor();
 
         //scan for spikemark
         spikeMark = 3;
@@ -149,5 +152,15 @@ public class RedLeftPurpleOnly extends LinearOpMode {
             //wait
         }
         sleep(1000);
+    }
+
+    //wait for the camera processor to start working
+    private void waitForProcessor() {
+        while(opModeInInit() && !detectionProcessor.getActivity()) {
+            telemetry.addLine("Waiting for camera...");
+            telemetry.update();
+        }
+        telemetry.addLine("Camera opened.");
+        telemetry.update();
     }
 }

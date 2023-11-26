@@ -22,6 +22,7 @@ public class DetectionProcessor implements VisionProcessor {
     //FIELDS
     //detection color
     private DetectionColor detectionColor = null;
+    private RelativePos relativePos = null;
     private boolean active = false;
     //block fields
     private int row = 10; //default
@@ -44,10 +45,11 @@ public class DetectionProcessor implements VisionProcessor {
     Telemetry telemetry = null;
 
     //constructor
-    public DetectionProcessor(int r, int c, DetectionColor color, Telemetry t) {
+    public DetectionProcessor(int r, int c, DetectionColor color, RelativePos pos, Telemetry t) {
         row = r;
         col = c;
         detectionColor = color;
+        relativePos = pos;
         telemetry = t;
         telemetry.addData("detectionColor", detectionColor);
         telemetry.update();
@@ -144,13 +146,51 @@ public class DetectionProcessor implements VisionProcessor {
 
     //scans 1000 times (or maybe more) for the spikemark location
     public int scanForSpikeMark() {
-        return 1;
+        if(relativePos != RelativePos.RIGHT) {
+            //scan right spikemark
+            boolean check = scanRegion(17, 14, 6, 5, 0.5);
+            if(check) {
+                return 3;
+            } else {
+                //scan middle spikemark
+                check = scanRegion(4, 13, 5, 5, 0.5);
+                if(check) {
+                    return 2;
+                } else {
+                    //none detected so must be left
+                    return 1;
+                }
+            }
+        } else {
+            //left side
+            //scan right spikemark
+            boolean check = scanRegion(26, 14, 4, 5, 0.5);
+            if(check) {
+                return 3;
+            } else {
+                //scan middle spikemark
+                check = scanRegion(12, 13, 5, 6, 0.5);
+                if(check) {
+                    return 2;
+                } else {
+                    //must be left spike
+                    return 1;
+                }
+            }
+
+        }
     }
 
     //enum for detection color
     public enum DetectionColor {
         RED,
         BLUE
+    }
+
+    //enum for relative position
+    public enum RelativePos {
+        RIGHT,
+        LEFT
     }
 
     //get activity of processor
