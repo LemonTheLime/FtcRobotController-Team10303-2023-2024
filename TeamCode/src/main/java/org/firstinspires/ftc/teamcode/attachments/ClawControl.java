@@ -30,7 +30,7 @@ public class ClawControl {
     private double rightMax = 1.0;
     //pitch constants
     private double pitch = 0; //position of pitch servo
-    private double groundPitch = 0.737;
+    private double groundPitch = 0.713;
     private double deliverPitch = 0.6;
     private double autoDeliverPitch = 0.82;
 

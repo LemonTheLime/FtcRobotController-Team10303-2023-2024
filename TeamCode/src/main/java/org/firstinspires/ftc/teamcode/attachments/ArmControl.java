@@ -33,7 +33,7 @@ public class ArmControl {
     private double maxRotation = offset; //arm starts off here
     private double minRotation = -30.0;
     private double deliverRotation = 40; //teleop
-    private double autoDeliverRotation = 5; //autonomous
+    private double autoDeliverRotation = 10; //autonomous
 
     //constructor
     public ArmControl(HardwareMap hwMap, Telemetry t) {
@@ -141,6 +141,14 @@ public class ArmControl {
         }
     }
 
+    //partially pull back arm for auto at 90 degrees
+    public void armUp() {
+        if(status) {
+            targetRotation = 90;
+            goToTargetRotation(targetRotation);
+        }
+    }
+
     //reset the encoders (arm should be at reset state)
     public void resetEncoder() {
         if(status) {
@@ -168,7 +176,7 @@ public class ArmControl {
     //waits until the arm has delivered for autonomous
     public boolean finishedDelivery() {
         if(status) {
-            double tolerance = 5; //degree tolerance
+            double tolerance = 10; //degree tolerance
             getEncoderValues();
             if (Math.abs(rotation - targetRotation) < tolerance) {
                 return true;

@@ -62,8 +62,8 @@ public class TeleOpMode extends OpMode {
         Claw.init();
 
         //Launcher control
-        Launcher = new LauncherControl(hardwareMap, telemetry);
-        Launcher.init();
+        //Launcher = new LauncherControl(hardwareMap, telemetry);
+        //Launcher.init();
     }
 
     //Teleop directly controls the drivetrain because autonomous is separate
@@ -103,9 +103,9 @@ public class TeleOpMode extends OpMode {
         }
         //run launcher
         if(runLauncher) {
-            Launcher.run();
+            //Launcher.run();
         } else {
-            Launcher.stop();
+            //Launcher.stop();
         }
     }
 
@@ -210,7 +210,7 @@ public class TeleOpMode extends OpMode {
     private void telemetryOutput() {
         Arm.telemetryOutput();
         Claw.telemetryOutput();
-        Launcher.telemetryOutput();
+        //Launcher.telemetryOutput();
         telemetry.update();
     }
 }
