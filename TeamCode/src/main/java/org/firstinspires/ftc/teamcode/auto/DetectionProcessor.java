@@ -22,6 +22,7 @@ public class DetectionProcessor implements VisionProcessor {
     //FIELDS
     //detection color
     private DetectionColor detectionColor = null;
+    private boolean active = false;
     //block fields
     private int row = 10; //default
     private int col = 10; //default
@@ -59,7 +60,7 @@ public class DetectionProcessor implements VisionProcessor {
         blockHeight = (int)Math.floor(height / row);
         for(int i = 0; i < row; i++) {
             for(int j = 0; j < col; j++) {
-                blockList.add(new GridBlock(j * blockWidth, i * blockHeight, blockWidth, blockHeight, j + i * row, detectionColor));
+                blockList.add(new GridBlock(j * blockWidth, i * blockHeight, blockWidth, blockHeight, j + i * col, detectionColor));
             }
         }
     }
@@ -110,6 +111,35 @@ public class DetectionProcessor implements VisionProcessor {
                 canvas.drawRect(gb.constructCanvasElem(scaleBmpPxToCanvasPx), rectPaint);
             }
         }
+
+        active = true;
+    }
+
+    //scans a certain region of blocks
+    public boolean scanRegion(int x, int y, int width, int height, double threshold_percent) {
+        int sum = 0;
+        for(int i = y; i < y + height; i++) {
+            for(int j = x; j < x + width; j++) {
+                //regionalize blocks
+                blockList.get(j + i * col).setRegionalized(true);
+
+                //add to sum if detected
+                if(blockList.get(j + i * col).isDetected()) {
+                    sum++;
+                };
+            }
+        }
+        //calculate threshold average
+        double thresh_avg = ((double)sum) / (width * height);
+
+        //telemetry
+        telemetry.addData("Threshold Average", thresh_avg);
+        telemetry.update();
+
+        if(thresh_avg > threshold_percent) {
+            return true;
+        }
+        return false;
     }
 
     //scans 1000 times (or maybe more) for the spikemark location
@@ -121,5 +151,10 @@ public class DetectionProcessor implements VisionProcessor {
     public enum DetectionColor {
         RED,
         BLUE
+    }
+
+    //get activity of processor
+    public boolean getActivity() {
+        return active;
     }
 }

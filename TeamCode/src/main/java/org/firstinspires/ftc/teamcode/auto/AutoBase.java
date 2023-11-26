@@ -16,6 +16,7 @@ public class AutoBase extends LinearOpMode {
     /* * * * Computer Vision * * * */
     private VisionPortal visionPortal = null;
     private DetectionProcessor detectionProcessor = null;
+    private boolean saturatedRegion = false;
 
     /* * * * Roadrunner * * * */
     private int spikeMark = 0; //1: left, 2: middle, 3: right
@@ -34,13 +35,29 @@ public class AutoBase extends LinearOpMode {
         //scan for spikemark
         spikeMark = detectionProcessor.scanForSpikeMark();
 
-        //close vision portal
-        //visionPortal.close();
+        //wait for camera to be ready
+        waitForProcessor();
 
-        // Wait for the DS start button to be touched.``
+        //scan region
+        saturatedRegion = detectionProcessor.scanRegion(4, 13, 5, 7, 0.5);
+
+        // Wait for the DS start button to be touched.
         waitForStart();
+        telemetry.addData("saturatedRegion", saturatedRegion);
+        telemetry.update();
+
         //close vision portal if not already done
         visionPortal.close();
 
+    }
+
+    //wait for the camera processor to start working
+    private void waitForProcessor() {
+        while(opModeInInit() && !detectionProcessor.getActivity()) {
+            telemetry.addLine("Waiting for camera...");
+            telemetry.update();
+        }
+        telemetry.addLine("Camera opened.");
+        telemetry.update();
     }
 }

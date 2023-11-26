@@ -26,6 +26,7 @@ public class GridBlock {
     //android canvas fields
     private android.graphics.Rect canvasRect;
     private int edgeColor = Color.GREEN;
+    private boolean regionalized = false;
     //blue scalars
     private Scalar blueLowHSV = new Scalar(90, 50, 20);
     private Scalar blueHighHSV = new Scalar(140, 255, 255);
@@ -85,10 +86,14 @@ public class GridBlock {
         currentThreshold = Core.sumElems(threshMat).val[0] / openCVRect.area() / 255;
         if(currentThreshold > PERCENT_THRESHOLD) {
             colorIsDetected = true;
-            edgeColor = Color.RED;
+            if(!regionalized) {
+                edgeColor = Color.RED;
+            }
         } else {
             colorIsDetected = false;
-            edgeColor = Color.GREEN;
+            if(!regionalized) {
+                edgeColor = Color.GREEN;
+            }
         }
 
         //cleanup threshmat
@@ -104,6 +109,15 @@ public class GridBlock {
     //return detected for not
     public boolean isDetected() {
         return colorIsDetected;
+    }
+
+    public void setRegionalized(boolean mode) {
+        if(mode) {
+            regionalized = true;
+            edgeColor = Color.BLUE;
+        } else {
+            regionalized = false;
+        }
     }
 
 }
