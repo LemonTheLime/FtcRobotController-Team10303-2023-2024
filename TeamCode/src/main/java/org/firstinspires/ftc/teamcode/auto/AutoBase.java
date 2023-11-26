@@ -28,7 +28,7 @@ public class AutoBase extends LinearOpMode {
          * It will then set the according position for the pixel deliveries
          */
 
-        detectionProcessor = new DetectionProcessor(30, 30, DetectionProcessor.DetectionColor.RED, DetectionProcessor.RelativePos.RIGHT, telemetry);
+        detectionProcessor = new DetectionProcessor(30, 30, DetectionProcessor.DetectionColor.RED, DetectionProcessor.RelativePos.LEFT, telemetry);
         visionPortal = VisionPortal.easyCreateWithDefaults(
                 hardwareMap.get(WebcamName.class, "Webcam 1"), detectionProcessor);
 
@@ -36,15 +36,19 @@ public class AutoBase extends LinearOpMode {
         waitForProcessor();
 
         //scan region
-        saturatedRegion = detectionProcessor.scanRegion(12, 13, 5, 6, 0.5);
+        //saturatedRegion = detectionProcessor.scanRegion(12, 13, 5, 6, 0.5);
 
-        //scan for spikemark
-        //spikeMark = detectionProcessor.scanForSpikeMark();
+        //scan for spikemark 10 times with a 10 ms delay
+        for(int i = 0; i < 10; i++) {
+            spikeMark = detectionProcessor.scanForSpikeMark();
+            sleep(10);
+        }
+
+        telemetry.addData("Spike mark selected", spikeMark);
+        telemetry.update();
 
         // Wait for the DS start button to be touched.
         waitForStart();
-        telemetry.addData("saturatedRegion", saturatedRegion);
-        telemetry.update();
 
         //close vision portal if not already done
         visionPortal.close();
