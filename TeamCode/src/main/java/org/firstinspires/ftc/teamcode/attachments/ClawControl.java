@@ -7,27 +7,34 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 /* ClawControl
  * runs the servos of the claw attachment
  */
-public class ClawControl{
+public class ClawControl {
 
     //FIELDS
     //hardware map
     private HardwareMap hardwareMap = null;
-    //claw status
+    //attachment status
     private boolean status;
     //telemetry
     private Telemetry t = null;
-    //servo fields
-    private Servo clawServo = null;
+    //hardware fields
+    private Servo leftClaw = null;
+    private Servo rightClaw = null;
     private Servo pitchLeft = null; //controls the pitch of the claw on the arm
     private Servo pitchRight = null;
     //claw constants
-    private boolean open;
+    private boolean leftOpen = false;
+    private boolean rightOpen = false;
+    private double leftMin = 0.0;
+    private double leftMax = 1.0;
+    private double rightMin = 0.;
+    private double rightMax = 1.0;
+    //pitch constants
     private double pitch = 0; //position of pitch servo
-    private double groundPitch = 0.81;
-    private double min = 0.85;
-    private double max = 1.0;
+    private double groundPitch = 0.713;
+    private double deliverPitch = 0.6;
+    private double autoDeliverPitch = 0.82;
 
-    //CONSTRUCTOR
+    //constructor
     public ClawControl(HardwareMap hwMap, Telemetry t) {
         status = false;
         this.t = t;
@@ -38,12 +45,14 @@ public class ClawControl{
     //initialize servo hardware
     private void initHardware() {
         //get servo from id
-        clawServo = hardwareMap.get(Servo.class, "claw");
+        leftClaw = hardwareMap.get(Servo.class, "leftClaw");
+        rightClaw = hardwareMap.get(Servo.class, "rightClaw");
         pitchLeft = hardwareMap.get(Servo.class, "leftPitch");
         pitchRight = hardwareMap.get(Servo.class, "rightPitch");
 
         //reverse direction
         pitchLeft.setDirection(Servo.Direction.REVERSE);
+        leftClaw.setDirection(Servo.Direction.REVERSE);
     }
 
     //initialize claw control mechanism
@@ -53,33 +62,87 @@ public class ClawControl{
 
     //telemetry
     public void telemetryOutput() {
-        //telemetry
         t.addLine("ClawControl: ");
         t.addData("status", status);
-        t.addData("open", open);
+        t.addData("leftOpen", leftOpen);
+        t.addData("rightOpen", rightOpen);
         t.addData("pitch", pitch);
         t.addLine();
     }
 
-
-    //open the claw servo
-    public void open() {
-        clawServo.setPosition(min);
-    }
-
-    //close the claw servo
-    public void close() {
-        clawServo.setPosition(max);
-    }
-
-    //change the claw servo position
-    public void changeClaw() {
+    //open left claw
+    public void openLeftClaw() {
         if(status) {
-            open = !open;
-            if (open) {
-                open();
+            leftClaw.setPosition(leftMin);
+            leftOpen = true;
+        }
+    }
+
+    //close left claw
+    public void closeLeftClaw() {
+        if(status) {
+            leftClaw.setPosition(leftMax);
+            leftOpen = false;
+        }
+    }
+
+    //change left claw
+    public void changeLeft() {
+        if(status) {
+            leftOpen = !leftOpen;
+            if (leftOpen) {
+                openLeftClaw();
             } else {
-                close();
+                closeLeftClaw();
+            }
+        }
+    }
+
+    //open right claw
+    public void openRightClaw() {
+        if(status) {
+            rightClaw.setPosition(rightMin);
+            rightOpen = true;
+        }
+    }
+
+    //close right claw
+    public void closeRightClaw() {
+        if(status) {
+            rightClaw.setPosition(rightMax);
+            rightOpen = false;
+        }
+    }
+
+    //change right claw
+    public void changeRight() {
+        if(status) {
+            rightOpen = !rightOpen;
+            if (rightOpen) {
+                openRightClaw();
+            } else {
+                closeRightClaw();
+            }
+        }
+    }
+
+    //change both claws
+    //if both claws in same state, reverse both
+    //if one open and other close, close both
+    public void changeBothClaw() {
+        if(status) {
+            if(leftOpen && rightOpen) {
+                //if both open, close both
+                closeLeftClaw();
+                closeRightClaw();
+            } else if(!leftOpen && !rightOpen) {
+                //if both close, open both
+                openLeftClaw();
+                openRightClaw();
+            } else {
+                //close both
+                closeLeftClaw();
+                closeRightClaw();
             }
         }
     }
@@ -105,7 +168,7 @@ public class ClawControl{
         }
     }
 
-    //rotate to a certain angle
+    //rotate pitch to a certain angle
     public void rotateTo(double angle) {
         if(status) {
             if (pitch > 1) {
@@ -133,6 +196,24 @@ public class ClawControl{
     public void reset() {
         if(status) {
             pitch = 0;
+            pitchLeft.setPosition(pitch);
+            pitchRight.setPosition(pitch);
+        }
+    }
+
+    //deliver pitch for teleop
+    public void deliver() {
+        if(status) {
+            pitch = deliverPitch;
+            pitchLeft.setPosition(pitch);
+            pitchRight.setPosition(pitch);
+        }
+    }
+
+    //deliver pitch for autonomous
+    public void autoDeliver() {
+        if(status) {
+            pitch = autoDeliverPitch;
             pitchLeft.setPosition(pitch);
             pitchRight.setPosition(pitch);
         }

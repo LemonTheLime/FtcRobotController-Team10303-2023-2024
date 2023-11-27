@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.attachments.ArmControl;
 import org.firstinspires.ftc.teamcode.attachments.ClawControl;
 import org.firstinspires.ftc.teamcode.attachments.LauncherControl;
 
-@TeleOp(name="TeleOpMode")
+@TeleOp(name = "TeleOpMode")
 public class TeleOpMode extends OpMode {
 
     //FIELDS
@@ -28,16 +28,16 @@ public class TeleOpMode extends OpMode {
     private ClawControl Claw = null;
     private double pitchRotation;
     private double pitchSpeed = 0.02;
-    private boolean changeClaw = false;
+    private boolean changeLeftClaw = false;
+    private boolean changeRightClaw = false;
+    private boolean changeAllClaw = false;
     //launcher
     private LauncherControl Launcher = null;
     private boolean runLauncher = false;
     //gamepads
     private String lastKeyPressed = "";
-    private boolean buttonPressed = false;
 
 
-    @Override
     public void init() {
         //init drivetrain hardware
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
@@ -66,7 +66,6 @@ public class TeleOpMode extends OpMode {
         Launcher.init();
     }
 
-    @Override
     //Teleop directly controls the drivetrain because autonomous is separate
     public void loop() {
         readPlayerInputs();
@@ -87,17 +86,24 @@ public class TeleOpMode extends OpMode {
     private void runAttachments() {
         //run arm
         Arm.rotate(armRotation * armSpeed);
-        //run claw
+        //run claws
         Claw.rotate(pitchRotation * pitchSpeed);
-        if(changeClaw) {
-            changeClaw = false;
-            Claw.changeClaw();
+        if(changeLeftClaw) {
+            changeLeftClaw = false;
+            Claw.changeLeft();
+        }
+        if(changeRightClaw) {
+            changeRightClaw = false;
+            Claw.changeRight();
+        }
+        if(changeAllClaw) {
+            //change both claws
+            changeAllClaw = false;
+            Claw.changeBothClaw();
         }
         //run launcher
         if(runLauncher) {
-            Launcher.run();
-        } else {
-            Launcher.stop();
+            Launcher.open();
         }
     }
 
@@ -131,18 +137,6 @@ public class TeleOpMode extends OpMode {
         armRotation = -gamepad2.left_stick_y; //moving stick up will flip the arm out
         pitchRotation = -gamepad2.right_stick_y; //moving stick up will flip the claw out
 
-        //open or close claw - click "a" once
-        if(gamepad2.a) {
-            if(lastKeyPressed.equals("none")) {
-                lastKeyPressed = "a";
-                changeClaw = true;
-            }
-        }
-        //gamepad2 single button press reset
-        if(!gamepad2.a) {
-            lastKeyPressed = "none";
-        }
-
         //hold b for launcher (both needed)
         if(gamepad1.b && gamepad2.b) {
             runLauncher = true;
@@ -150,16 +144,63 @@ public class TeleOpMode extends OpMode {
             runLauncher = false;
         }
 
-        //press x to set pitch servo to ground
-        if(gamepad2.x && !gamepad2.y) {
-            Claw.ground();
-            Arm.ground();
+        //SINGLE PRESS BUTTONS
+        //arm prepares to drop pixel
+        if(gamepad2.a) {
+            if(lastKeyPressed.equals("none")) {
+                lastKeyPressed = "a";
+                Arm.deliver();
+            }
+        }
+        //arm to ground state
+        if(gamepad2.x) {
+            if(lastKeyPressed.equals("none")) {
+                lastKeyPressed = "x";
+                Claw.ground();
+                Arm.ground();
+            }
+        }
+        //arm to reset state
+        if(gamepad2.y) {
+            if(lastKeyPressed.equals("none")) {
+                lastKeyPressed = "y";
+                Arm.reset();
+                Claw.reset();
+            }
+        }
+        //reset arm encoders
+        if(gamepad2.dpad_up) {
+            if(lastKeyPressed.equals("none")) {
+                lastKeyPressed = "dpad_up";
+                Arm.resetEncoder();
+            }
+        }
+        //change left claw
+        if(gamepad2.dpad_left) {
+            if(lastKeyPressed.equals("none")) {
+                lastKeyPressed = "dpad_left";
+                changeLeftClaw = true;
+            }
+        }
+        //change right claw
+        if(gamepad2.dpad_right) {
+            if(lastKeyPressed.equals("none")) {
+                lastKeyPressed = "dpad_right";
+                changeRightClaw = true;
+            }
+        }
+        //either open or close both claws
+        if(gamepad2.dpad_down) {
+            if(lastKeyPressed.equals("none")) {
+                lastKeyPressed = "dpad_down";
+                changeAllClaw = true;
+            }
         }
 
-        //press y to reset
-        if(gamepad2.y && !gamepad2.x) {
-            Arm.reset();
-            Claw.reset();
+
+        //gamepad2 single button press reset
+        if(!gamepad2.a && !gamepad2.x && !gamepad2.y && !gamepad2.dpad_left && !gamepad2.dpad_right && !gamepad2.dpad_up && !gamepad2.dpad_down) {
+            lastKeyPressed = "none";
         }
     }
 
@@ -167,7 +208,7 @@ public class TeleOpMode extends OpMode {
     private void telemetryOutput() {
         Arm.telemetryOutput();
         Claw.telemetryOutput();
-        Launcher.telemetryOutput();
+        //Launcher.telemetryOutput();
         telemetry.update();
     }
 }

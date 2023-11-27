@@ -2,12 +2,14 @@ package org.firstinspires.ftc.teamcode.attachments;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /* LauncherControl
  * runs the motor for the drone launcher
  */
-public class LauncherControl{
+public class LauncherControl {
 
     //FIELDS
     //hardware map
@@ -17,11 +19,10 @@ public class LauncherControl{
     //telemetry
     private Telemetry t = null;
     //motor fields
-    private DcMotor launcher;
-    private double power = 1.0;
-    private boolean running;
+    private Servo launcher;
+    private boolean open = false;
 
-    //CONSTRUCTOR
+    //constructor
     public LauncherControl(HardwareMap hwMap, Telemetry t) {
         status = false;
         this.t = t;
@@ -32,7 +33,7 @@ public class LauncherControl{
     //initialize motor hardware
     private void initHardware() {
         //get motor from id
-        launcher = hardwareMap.get(DcMotor.class, "launcher");
+        launcher = hardwareMap.get(Servo.class, "launcher");
 
         //change direction if necessary
     }
@@ -40,28 +41,29 @@ public class LauncherControl{
     //initializes launcher mechanism
     public void init() {
         status = true;
-        running = false;
     }
 
     //telemetry
     public void telemetryOutput() {
-        //telemetry
         t.addLine("LauncherControl: ");
         t.addData("status", status);
-        t.addData("running", running);
+        t.addData("position", open);
         t.addLine();
     }
 
     //run the servo
-    public void run() {
-        running = true;
-        launcher.setPower(power);
+    public void open() {
+        if(status) {
+            open = true;
+            launcher.setPosition(1);
+        }
     }
 
     //stop the servo
-    public void stop() {
-        running = false;
-        launcher.setPower(0);
+    public void close() {
+        if(status) {
+            open = false;
+            launcher.setPosition(0);
+        }
     }
-
 }

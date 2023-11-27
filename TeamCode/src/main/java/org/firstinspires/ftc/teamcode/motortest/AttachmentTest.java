@@ -1,12 +1,14 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.motortest;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.attachments.ArmControl;
 import org.firstinspires.ftc.teamcode.attachments.ClawControl;
 import org.firstinspires.ftc.teamcode.attachments.LauncherControl;
 
-@TeleOp(name="AttachmentTest", group = "Testing")
+@Disabled
+@TeleOp(name = "AttachmentTest", group = "Motor Testing")
 public class AttachmentTest extends OpMode {
 
     //FIELDS
@@ -33,7 +35,7 @@ public class AttachmentTest extends OpMode {
 
         Claw.telemetryOutput();
         Claw.rotateTo(0.5);
-        Claw.open();
+        //Claw.open();
 
         //launcher.telemetryOutput();
         telemetry.update();
