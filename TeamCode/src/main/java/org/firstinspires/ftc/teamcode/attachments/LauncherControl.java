@@ -2,12 +2,14 @@ package org.firstinspires.ftc.teamcode.attachments;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /* LauncherControl
  * runs the motor for the drone launcher
  */
-public class LauncherControl{
+public class LauncherControl {
 
     //FIELDS
     //hardware map
@@ -17,9 +19,8 @@ public class LauncherControl{
     //telemetry
     private Telemetry t = null;
     //motor fields
-    private DcMotor launcher;
-    private double power = 1.0;
-    private boolean running;
+    private Servo launcher;
+    private boolean open = false;
 
     //constructor
     public LauncherControl(HardwareMap hwMap, Telemetry t) {
@@ -32,7 +33,7 @@ public class LauncherControl{
     //initialize motor hardware
     private void initHardware() {
         //get motor from id
-        launcher = hardwareMap.get(DcMotor.class, "launcher");
+        launcher = hardwareMap.get(Servo.class, "launcher");
 
         //change direction if necessary
     }
@@ -40,30 +41,29 @@ public class LauncherControl{
     //initializes launcher mechanism
     public void init() {
         status = true;
-        running = false;
     }
 
     //telemetry
     public void telemetryOutput() {
         t.addLine("LauncherControl: ");
         t.addData("status", status);
-        t.addData("running", running);
+        t.addData("position", open);
         t.addLine();
     }
 
     //run the servo
-    public void run() {
+    public void open() {
         if(status) {
-            running = true;
-            launcher.setPower(power);
+            open = true;
+            launcher.setPosition(1);
         }
     }
 
     //stop the servo
-    public void stop() {
+    public void close() {
         if(status) {
-            running = false;
-            launcher.setPower(0);
+            open = false;
+            launcher.setPosition(0);
         }
     }
 }

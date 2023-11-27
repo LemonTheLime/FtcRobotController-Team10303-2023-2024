@@ -13,13 +13,13 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.vision.VisionPortal;
 
-/* AutoBase
- * Basic structure of autonomous programs with computer vision and roadrunner
+/* RedRight
+ * Delivers purple and yellow pixels to corresponding spike marks and then parks.
  */
 @Autonomous(name = "RedRight")
 public class RedRight extends LinearOpMode {
 
-    /* Attachments */
+    /* * * * Attachments * * * */
     private ArmControl Arm = null;
     private ClawControl Claw = null;
 
@@ -36,35 +36,29 @@ public class RedRight extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
 
-        //attachments
+        //create attachments
         Arm = new ArmControl(hardwareMap, telemetry);
         Claw = new ClawControl(hardwareMap, telemetry);
 
-        /* Build roadrunner trajectories */
+        //Build roadrunner trajectories
         drive = new SampleMecanumDrive(hardwareMap);
         buildLeftPixelTraj();
         buildMiddlePixelTraj();
         buildRightPixelTraj();
 
-
-        /*
-         * Computer vision will scan with the camera 1000 times to check for a block
-         * It will then set the according position for the pixel deliveries
-         */
-
+        //create vision portal and processor
         detectionProcessor = new DetectionProcessor(30, 30, DetectionProcessor.DetectionColor.RED, DetectionProcessor.RelativePos.RIGHT, telemetry);
         visionPortal = VisionPortal.easyCreateWithDefaults(
                 hardwareMap.get(WebcamName.class, "Webcam 1"), detectionProcessor);
 
-        //wait for camera processor
-        waitForProcessor();
-
         //scan for spikemark
-        spikeMark = 3;
+        scanSpikeMark();
 
-
-        // Wait for the DS start button to be touched.``
+        // Wait for the DS start button to be touched.
         waitForStart();
+
+        //scan for spikemark if not finished in init
+        scanSpikeMark();
 
         //init attachments
         Arm.init();
@@ -104,7 +98,7 @@ public class RedRight extends LinearOpMode {
                 .build();
         //deliver yellow pixel to backdrop
         lTraj3 = drive.trajectoryBuilder(lTraj2.end(), true)
-                .splineTo(new Vector2d(-28, 30), Math.toRadians(90))
+                .splineTo(new Vector2d(-29, 30), Math.toRadians(90))
                 .addTemporalMarker(0, () -> {
                     Arm.autoDeliver();
                     Claw.autoDeliver();
@@ -112,7 +106,7 @@ public class RedRight extends LinearOpMode {
                 .build();
         //close arm and park
         lTraj4 = drive.trajectoryBuilder(lTraj3.end())
-                .strafeLeft(28)
+                .strafeLeft(29)
                 .addTemporalMarker(0, () -> {
                     Arm.reset();
                 })
@@ -248,7 +242,7 @@ public class RedRight extends LinearOpMode {
         while(opModeIsActive() && !Arm.finishedDelivery()) {
             //wait
         }
-        sleep(1000);
+        sleep(10);
     }
 
     //wait for the camera processor to start working
@@ -259,5 +253,21 @@ public class RedRight extends LinearOpMode {
         }
         telemetry.addLine("Camera opened.");
         telemetry.update();
+    }
+
+    //scan the spikemark
+    private void scanSpikeMark() {
+        if(!detectionProcessor.getActivity()) {
+            //wait for camera processor
+            waitForProcessor();
+
+            //scan for spikemark 10 times with a 10 ms delay and print selection
+            for(int i = 0; i < 10; i++) {
+                spikeMark = detectionProcessor.scanForSpikeMark();
+                sleep(10);
+            }
+            telemetry.addData("Spike mark selected", spikeMark);
+            telemetry.update();
+        }
     }
 }

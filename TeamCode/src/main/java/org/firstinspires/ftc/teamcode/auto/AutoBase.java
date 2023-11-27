@@ -28,7 +28,7 @@ public class AutoBase extends LinearOpMode {
          * It will then set the according position for the pixel deliveries
          */
 
-        detectionProcessor = new DetectionProcessor(30, 30, DetectionProcessor.DetectionColor.RED, DetectionProcessor.RelativePos.LEFT, telemetry);
+        detectionProcessor = new DetectionProcessor(30, 30, DetectionProcessor.DetectionColor.BLUE, DetectionProcessor.RelativePos.LEFT, telemetry);
         visionPortal = VisionPortal.easyCreateWithDefaults(
                 hardwareMap.get(WebcamName.class, "Webcam 1"), detectionProcessor);
 

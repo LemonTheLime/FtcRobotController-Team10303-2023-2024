@@ -12,11 +12,11 @@ import org.firstinspires.ftc.teamcode.attachments.ClawControl;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.vision.VisionPortal;
 
-/* RedLeftPurpleOnly
- * Delivers purple pixel only
+/* BlueLeft
+ * Delivers purple and yellow pixels to corresponding spike marks and then parks.
  */
-@Autonomous(name = "RedLeftPurpleOnly")
-public class RedLeftPurpleOnly extends LinearOpMode {
+@Autonomous(name = "BlueLeft")
+public class BlueLeft extends LinearOpMode {
 
     /* * * * Attachments * * * */
     private ArmControl Arm = null;
@@ -29,9 +29,9 @@ public class RedLeftPurpleOnly extends LinearOpMode {
     /* * * * Roadrunner * * * */
     private int spikeMark = 0; //1: left, 2: middle, 3: right
     private SampleMecanumDrive drive;
-    private Trajectory lTraj1, lTraj2 = null;
-    private Trajectory mTraj1, mTraj2 = null;
-    private Trajectory rTraj1, rTraj1prime, rTraj2 = null;
+    private Trajectory lTraj1, lTraj2, lTraj3, lTraj4, lTraj5, lTraj6 = null;
+    private Trajectory mTraj1, mTraj2, mTraj3, mTraj4, mTraj5 = null;
+    private Trajectory rTraj1, rTraj1prime, rTraj2, rTraj3, rTraj4, rTraj5 = null;
 
     public void runOpMode() throws InterruptedException {
 
@@ -39,14 +39,14 @@ public class RedLeftPurpleOnly extends LinearOpMode {
         Arm = new ArmControl(hardwareMap, telemetry);
         Claw = new ClawControl(hardwareMap, telemetry);
 
-        // Build roadrunner trajectories
+        //Build roadrunner trajectories
         drive = new SampleMecanumDrive(hardwareMap);
         buildLeftPixelTraj();
         buildMiddlePixelTraj();
         buildRightPixelTraj();
 
         //create vision portal and processor
-        detectionProcessor = new DetectionProcessor(30, 30, DetectionProcessor.DetectionColor.RED, DetectionProcessor.RelativePos.LEFT, telemetry);
+        detectionProcessor = new DetectionProcessor(30, 30, DetectionProcessor.DetectionColor.BLUE, DetectionProcessor.RelativePos.LEFT, telemetry);
         visionPortal = VisionPortal.easyCreateWithDefaults(
                 hardwareMap.get(WebcamName.class, "Webcam 1"), detectionProcessor);
 
@@ -56,7 +56,7 @@ public class RedLeftPurpleOnly extends LinearOpMode {
         // Wait for the DS start button to be touched.
         waitForStart();
 
-        //scan for spikemark if not given enough time in init
+        //scan for spikemark if not finished in init
         scanSpikeMark();
 
         //init attachments
@@ -90,7 +90,26 @@ public class RedLeftPurpleOnly extends LinearOpMode {
                 .lineToSplineHeading(new Pose2d(-26.5, -3, Math.toRadians(25)))
                 .build();
         lTraj2 = drive.trajectoryBuilder(lTraj1.end())
-                .lineToSplineHeading(new Pose2d(-15, 0, Math.toRadians(0)))
+                .lineToSplineHeading(new Pose2d(-15, 0, Math.toRadians(90)))
+                .build();
+        //deliver yellow pixel to backdrop
+        //old -29
+        lTraj3 = drive.trajectoryBuilder(lTraj2.end(), true)
+                .splineTo(new Vector2d(-17.5, -30), Math.toRadians(-90))
+                .addTemporalMarker(0, () -> {
+                    Arm.autoDeliver();
+                    Claw.autoDeliver();
+                })
+                .build();
+        //close arm and park
+        lTraj4 = drive.trajectoryBuilder(lTraj3.end())
+                .strafeRight(17)
+                .addTemporalMarker(0, () -> {
+                    Arm.reset();
+                })
+                .build();
+        lTraj5 = drive.trajectoryBuilder(lTraj4.end())
+                .back(16)
                 .build();
     }
 
@@ -99,6 +118,20 @@ public class RedLeftPurpleOnly extends LinearOpMode {
         //deliver purple pixel
         drive.followTrajectory(lTraj1);
         drive.followTrajectory(lTraj2);
+        //deliver yellow pixel to backdrop
+        drive.followTrajectory(lTraj3);
+        //wait for arm to deliver and open claw
+        waitForArm();
+        Claw.openRightClaw();
+        sleep(1000);
+        //retract
+        Arm.armUp();
+        Claw.reset();
+        waitForArm();
+        //park
+        drive.followTrajectory(lTraj4);
+        drive.followTrajectory(lTraj5);
+        waitForArm();
     }
 
     //build middle pixel trajectories
@@ -110,6 +143,25 @@ public class RedLeftPurpleOnly extends LinearOpMode {
         mTraj2 = drive.trajectoryBuilder(mTraj1.end())
                 .forward(10)
                 .build();
+        //deliver yellow pixel to backdrop
+        mTraj3 = drive.trajectoryBuilder(mTraj2.end(), true)
+                .splineTo(new Vector2d(-24.5, -30), Math.toRadians(-90))
+                .addTemporalMarker(0, () -> {
+                    Arm.autoDeliver();
+                    Claw.autoDeliver();
+                })
+                .build();
+        //close arm and park
+        mTraj4 = drive.trajectoryBuilder(mTraj3.end())
+                .strafeRight(23)
+                .addTemporalMarker(0, () -> {
+                    Arm.reset();
+                    Claw.reset();
+                })
+                .build();
+        mTraj5 = drive.trajectoryBuilder(mTraj4.end())
+                .back(16)
+                .build();
     }
 
     //follow middle pixel trajectories
@@ -117,6 +169,19 @@ public class RedLeftPurpleOnly extends LinearOpMode {
         //deliver purple pixel
         drive.followTrajectory(mTraj1);
         drive.followTrajectory(mTraj2);
+        //deliver yellow pixel to backdrop
+        drive.followTrajectory(mTraj3);
+        //wait for arm to deliver and open claw
+        waitForArm();
+        Claw.openRightClaw();
+        sleep(1000);
+        //retract
+        Arm.armUp();
+        waitForArm();
+        //park
+        drive.followTrajectory(mTraj4);
+        drive.followTrajectory(mTraj5);
+        waitForArm();
     }
 
     //build right pixel trajectories
@@ -126,10 +191,29 @@ public class RedLeftPurpleOnly extends LinearOpMode {
                 .lineToSplineHeading(new Pose2d(-16.5, 0, Math.toRadians(-45)))
                 .build();
         rTraj1prime = drive.trajectoryBuilder(rTraj1.end())
-                .back(10.5)
+                .back(11.1)
                 .build();
         rTraj2 = drive.trajectoryBuilder(rTraj1prime.end())
                 .lineToSplineHeading(new Pose2d(-15, 0, Math.toRadians(0)))
+                .build();
+        //deliver yellow pixel to backdrop
+        rTraj3 = drive.trajectoryBuilder(rTraj2.end(), true)
+                .splineTo(new Vector2d(-30, -30), Math.toRadians(-90))
+                .addTemporalMarker(0, () -> {
+                    Arm.autoDeliver();
+                    Claw.autoDeliver();
+                })
+                .build();
+        //close arm and park
+        rTraj4 = drive.trajectoryBuilder(rTraj3.end())
+                .strafeRight(29)
+                .addTemporalMarker(0, () -> {
+                    Arm.reset();
+                    Claw.reset();
+                })
+                .build();
+        rTraj5 = drive.trajectoryBuilder(rTraj4.end())
+                .back(16)
                 .build();
     }
 
@@ -139,6 +223,19 @@ public class RedLeftPurpleOnly extends LinearOpMode {
         drive.followTrajectory(rTraj1);
         drive.followTrajectory(rTraj1prime);
         drive.followTrajectory(rTraj2);
+        //deliver yellow pixel to backdrop
+        drive.followTrajectory(rTraj3);
+        //wait for arm to deliver and open claw
+        waitForArm();
+        Claw.openRightClaw();
+        sleep(1000);
+        //retract
+        Arm.armUp();
+        waitForArm();
+        //parkract and park
+        drive.followTrajectory(rTraj4);
+        drive.followTrajectory(rTraj5);
+        waitForArm();
     }
     //wait for the arm and claw to deliver
     private void waitForArm() {

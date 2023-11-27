@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -12,11 +11,11 @@ import org.firstinspires.ftc.teamcode.attachments.ClawControl;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.vision.VisionPortal;
 
-/* RedLeftPurpleOnly
+/* BlueRightPurpleOnly
  * Delivers purple pixel only
  */
-@Autonomous(name = "RedLeftPurpleOnly")
-public class RedLeftPurpleOnly extends LinearOpMode {
+@Autonomous(name = "BlueRightPurpleOnly")
+public class BlueRightPurpleOnly extends LinearOpMode {
 
     /* * * * Attachments * * * */
     private ArmControl Arm = null;
@@ -29,9 +28,9 @@ public class RedLeftPurpleOnly extends LinearOpMode {
     /* * * * Roadrunner * * * */
     private int spikeMark = 0; //1: left, 2: middle, 3: right
     private SampleMecanumDrive drive;
-    private Trajectory lTraj1, lTraj2 = null;
+    private Trajectory lTraj1, lTraj1prime, lTraj2 = null;
     private Trajectory mTraj1, mTraj2 = null;
-    private Trajectory rTraj1, rTraj1prime, rTraj2 = null;
+    private Trajectory rTraj1, rTraj2 = null;
 
     public void runOpMode() throws InterruptedException {
 
@@ -46,7 +45,7 @@ public class RedLeftPurpleOnly extends LinearOpMode {
         buildRightPixelTraj();
 
         //create vision portal and processor
-        detectionProcessor = new DetectionProcessor(30, 30, DetectionProcessor.DetectionColor.RED, DetectionProcessor.RelativePos.LEFT, telemetry);
+        detectionProcessor = new DetectionProcessor(30, 30, DetectionProcessor.DetectionColor.BLUE, DetectionProcessor.RelativePos.RIGHT, telemetry);
         visionPortal = VisionPortal.easyCreateWithDefaults(
                 hardwareMap.get(WebcamName.class, "Webcam 1"), detectionProcessor);
 
@@ -87,9 +86,12 @@ public class RedLeftPurpleOnly extends LinearOpMode {
     private void buildLeftPixelTraj() {
         //deliver purple pixel
         lTraj1 = drive.trajectoryBuilder(new Pose2d())
-                .lineToSplineHeading(new Pose2d(-26.5, -3, Math.toRadians(25)))
+                .lineToSplineHeading(new Pose2d(-16.5, 0, Math.toRadians(45)))
                 .build();
-        lTraj2 = drive.trajectoryBuilder(lTraj1.end())
+        lTraj1prime = drive.trajectoryBuilder(lTraj1.end())
+                .back(10.5)
+                .build();
+        lTraj2 = drive.trajectoryBuilder(lTraj1prime.end())
                 .lineToSplineHeading(new Pose2d(-15, 0, Math.toRadians(0)))
                 .build();
     }
@@ -98,6 +100,7 @@ public class RedLeftPurpleOnly extends LinearOpMode {
     private void followLeftPixelTraj() {
         //deliver purple pixel
         drive.followTrajectory(lTraj1);
+        drive.followTrajectory(lTraj1prime);
         drive.followTrajectory(lTraj2);
     }
 
@@ -123,12 +126,9 @@ public class RedLeftPurpleOnly extends LinearOpMode {
     private void buildRightPixelTraj() {
         //deliver purple pixel
         rTraj1 = drive.trajectoryBuilder(new Pose2d())
-                .lineToSplineHeading(new Pose2d(-16.5, 0, Math.toRadians(-45)))
+                .lineToSplineHeading(new Pose2d(-26.5, 3, Math.toRadians(-25)))
                 .build();
-        rTraj1prime = drive.trajectoryBuilder(rTraj1.end())
-                .back(10.5)
-                .build();
-        rTraj2 = drive.trajectoryBuilder(rTraj1prime.end())
+        rTraj2 = drive.trajectoryBuilder(rTraj1.end())
                 .lineToSplineHeading(new Pose2d(-15, 0, Math.toRadians(0)))
                 .build();
     }
@@ -137,7 +137,6 @@ public class RedLeftPurpleOnly extends LinearOpMode {
     private void followRightPixelTraj() {
         //deliver purple pixel
         drive.followTrajectory(rTraj1);
-        drive.followTrajectory(rTraj1prime);
         drive.followTrajectory(rTraj2);
     }
     //wait for the arm and claw to deliver

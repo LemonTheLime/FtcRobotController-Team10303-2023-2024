@@ -146,7 +146,7 @@ public class DetectionProcessor implements VisionProcessor {
 
     //scans 1000 times (or maybe more) for the spikemark location
     public int scanForSpikeMark() {
-        if(relativePos != RelativePos.RIGHT) {
+        if(relativePos == RelativePos.RIGHT) {
             //scan right spikemark
             boolean check = scanRegion(17, 14, 6, 5, 0.5);
             if(check) {
