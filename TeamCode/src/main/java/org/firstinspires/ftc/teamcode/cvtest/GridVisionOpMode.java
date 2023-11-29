@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 
-
+@Disabled
 @Autonomous(name = "GridVisionOpMode", group = "CV Test")
 public class GridVisionOpMode extends LinearOpMode {
 
