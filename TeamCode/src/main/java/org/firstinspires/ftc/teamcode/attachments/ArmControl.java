@@ -1,13 +1,18 @@
 package org.firstinspires.ftc.teamcode.attachments;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /* ArmControl
  * runs the arm attachment of the robot
  */
+
+@Config
 public class ArmControl {
 
     //FIELDS
@@ -24,6 +29,7 @@ public class ArmControl {
     private int ticksPerRev = 288;
     private double gearRatio = 32.0 / 10.0;
     private int armVelocity = 300; //ticks per second
+    private double power = 0.5;
     private int leftEncoderValue;
     private int rightEncoderValue;
     //rotation constants
@@ -35,12 +41,23 @@ public class ArmControl {
     private double deliverRotation = 40; //teleop
     private double autoDeliverRotation = 10; //autonomous
 
+    //config
+    public static double kP = 60;
+    public static double kI = 6;
+    public static double kD = 0;
+    public static double kF = 0;
+
     //constructor
     public ArmControl(HardwareMap hwMap, Telemetry t) {
         status = false;
         this.t = t;
         hardwareMap = hwMap;
         initHardware();
+    }
+
+    //updates PIDF coefficients
+    public void updatePIDF() {
+        rightMotor.setVelocityPIDFCoefficients(kP, kI, kD, kF);
     }
 
     //initialize motor hardware
@@ -94,8 +111,9 @@ public class ArmControl {
             rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             //set motor velocities
-            leftMotor.setVelocity(armVelocity);
-            rightMotor.setVelocity(armVelocity);
+            //leftMotor.setVelocity(armVelocity);
+            //rightMotor.setVelocity(armVelocity);
+            rightMotor.setPower(power);
         }
     }
 
