@@ -207,7 +207,7 @@ public class TeleOpMode extends OpMode {
         if(gamepad2.left_bumper) {
             if(lastKeyPressed.equals("none")) {
                 lastKeyPressed = "left_bumper";
-                //Arm.updatePIDF();
+                Arm.updatePIDF();
             }
         }
 
