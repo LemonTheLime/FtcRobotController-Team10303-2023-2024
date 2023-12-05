@@ -150,7 +150,7 @@ public class RedLeftPurpleOnly extends LinearOpMode {
 
     //wait for the camera processor to start working
     private void waitForProcessor() {
-        while(!detectionProcessor.getActivity()) {
+        while(opModeIsActive() && !detectionProcessor.getActivity()) {
             telemetry.addLine("Waiting for camera...");
             telemetry.update();
         }

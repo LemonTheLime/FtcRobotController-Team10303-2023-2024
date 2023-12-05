@@ -186,6 +186,7 @@ public class ArmControl {
         if(status) {
             leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            targetRotation = 180;
         }
     }
 
