@@ -224,7 +224,7 @@ public class TeleOpMode extends OpMode {
     private void telemetryOutput() {
         Arm.telemetryOutput();
         Claw.telemetryOutput();
-        //Launcher.telemetryOutput();
+        Launcher.telemetryOutput();
         telemetry.update();
     }
 }
