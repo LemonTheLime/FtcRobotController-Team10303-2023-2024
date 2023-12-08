@@ -55,7 +55,7 @@ public class LauncherControl {
     public void open() {
         if(status) {
             open = true;
-            launcher.setPosition(1);
+            launcher.setPosition(0.6);
         }
     }
 
@@ -63,7 +63,7 @@ public class LauncherControl {
     public void close() {
         if(status) {
             open = false;
-            launcher.setPosition(0);
+            launcher.setPosition(1);
         }
     }
 }

@@ -11,11 +11,17 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 /* ArmControl
  * runs the arm attachment of the robot
  */
-
 @Config
-public class ArmControl {
+public class ArmPIDControl {
 
     //FIELDS
+    //Config
+    public static double Kp = 10;
+    public static double Ki = 0.5;
+    public static double Kd = 0;
+    public static double Kf = 0;
+
+
     //hardware map
     private HardwareMap hardwareMap = null;
     //attachment status
@@ -29,7 +35,6 @@ public class ArmControl {
     private int ticksPerRev = 288;
     private double gearRatio = 32.0 / 10.0;
     private int armVelocity = 300; //ticks per second
-    private double power = 0.5;
     private int leftEncoderValue;
     private int rightEncoderValue;
     //rotation constants
@@ -41,28 +46,12 @@ public class ArmControl {
     private double deliverRotation = 40; //teleop
     private double autoDeliverRotation = 10; //autonomous
 
-    private DcMotorEx exEncoder = null;
-    private int exEncoderCount = 0;
-
-    //config
-    public static double kP = 60;
-    public static double kI = 6;
-    public static double kD = 0;
-    public static double kF = 0;
-    public static int tolerance = 5;
-
     //constructor
-    public ArmControl(HardwareMap hwMap, Telemetry t) {
+    public ArmPIDControl(HardwareMap hwMap, Telemetry t) {
         status = false;
         this.t = t;
         hardwareMap = hwMap;
         initHardware();
-    }
-
-    //updates PIDF coefficients
-    public void updatePIDF() {
-        rightMotor.setVelocityPIDFCoefficients(kP, kI, kD, kF);
-        rightMotor.setTargetPositionTolerance(tolerance);
     }
 
     //initialize motor hardware
@@ -80,8 +69,6 @@ public class ArmControl {
         rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        exEncoder = hardwareMap.get(DcMotorEx.class, "leftFront");
     }
 
     //initialize arm control mechanism
@@ -98,7 +85,6 @@ public class ArmControl {
         t.addData("rightEncoderValue", rightEncoderValue);
         t.addData("rotation", rotation);
         t.addData("targetRotation", targetRotation);
-        t.addData("external encoder", exEncoderCount);
         t.addLine();
     }
 
@@ -119,9 +105,8 @@ public class ArmControl {
             rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             //set motor velocities
-            //leftMotor.setVelocity(armVelocity);
-            //rightMotor.setVelocity(armVelocity);
-            rightMotor.setPower(power);
+            leftMotor.setVelocity(armVelocity);
+            rightMotor.setVelocity(armVelocity);
         }
     }
 
@@ -131,7 +116,6 @@ public class ArmControl {
             leftEncoderValue = leftMotor.getCurrentPosition();
             rightEncoderValue = rightMotor.getCurrentPosition();
             rotation = offset + (double) rightEncoderValue / ticksPerRev * 360.0 / gearRatio;
-            exEncoderCount = exEncoder.getCurrentPosition();
         }
     }
 
@@ -140,17 +124,12 @@ public class ArmControl {
         if(status) {
             //set the targetRotation
             targetRotation += angle;
-
-            //arm having encoder static issues
-            /*
             if (targetRotation < minRotation) {
                 targetRotation = minRotation;
             }
             if (targetRotation > maxRotation) {
                 targetRotation = maxRotation;
             }
-
-             */
 
             //rotate the arm to the target
             goToTargetRotation(targetRotation);
@@ -186,7 +165,6 @@ public class ArmControl {
         if(status) {
             leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            targetRotation = 180;
         }
     }
 
@@ -217,5 +195,12 @@ public class ArmControl {
             return false;
         }
         return false;
+    }
+
+    //update PIDF coefficients
+    public void updatePIDF() {
+        PIDFCoefficients c = new PIDFCoefficients(Kp, Ki, Kd, Kf);
+        rightMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, c);
+        leftMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, c);
     }
 }

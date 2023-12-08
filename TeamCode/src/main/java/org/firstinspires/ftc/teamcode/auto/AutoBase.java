@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 /* AutoBase
  * Basic structure of autonomous programs with computer vision and roadrunner
  */
+@Disabled
 @Autonomous(name = "AutoBase")
 public class AutoBase extends LinearOpMode {
 

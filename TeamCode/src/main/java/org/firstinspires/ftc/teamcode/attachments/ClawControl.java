@@ -25,9 +25,9 @@ public class ClawControl {
     private boolean leftOpen = false;
     private boolean rightOpen = false;
     private double leftMin = 0.0;
-    private double leftMax = 1.0;
+    private double leftMax = 0.5;
     private double rightMin = 0.;
-    private double rightMax = 1.0;
+    private double rightMax = 0.5;
     //pitch constants
     private double pitch = 0; //position of pitch servo
     private double groundPitch = 0.713;

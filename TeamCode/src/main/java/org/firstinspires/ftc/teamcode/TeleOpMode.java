@@ -55,14 +55,20 @@ public class TeleOpMode extends OpMode {
 
         //Arm mechanism
         Arm = new ArmControl(hardwareMap, telemetry);
-        Arm.init();
 
         //Claw mechanism
         Claw = new ClawControl(hardwareMap, telemetry);
-        Claw.init();
 
         //Launcher control
         Launcher = new LauncherControl(hardwareMap, telemetry);
+
+        Arm.updatePIDF();
+    }
+
+    //TeleOp init
+    public void start() {
+        Arm.init();
+        Claw.init();
         Launcher.init();
     }
 
@@ -199,7 +205,9 @@ public class TeleOpMode extends OpMode {
 
 
         //gamepad2 single button press reset
-        if(!gamepad2.a && !gamepad2.x && !gamepad2.y && !gamepad2.dpad_left && !gamepad2.dpad_right && !gamepad2.dpad_up && !gamepad2.dpad_down) {
+        if(!gamepad2.a && !gamepad2.x && !gamepad2.y && !gamepad2.dpad_left
+                && !gamepad2.dpad_right && !gamepad2.dpad_up
+                && !gamepad2.dpad_down && !gamepad2.left_bumper) {
             lastKeyPressed = "none";
         }
     }
@@ -208,7 +216,7 @@ public class TeleOpMode extends OpMode {
     private void telemetryOutput() {
         Arm.telemetryOutput();
         Claw.telemetryOutput();
-        //Launcher.telemetryOutput();
+        Launcher.telemetryOutput();
         telemetry.update();
     }
 }

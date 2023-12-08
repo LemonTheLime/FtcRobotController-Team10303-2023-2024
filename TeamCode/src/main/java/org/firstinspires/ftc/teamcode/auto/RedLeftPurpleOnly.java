@@ -51,7 +51,7 @@ public class RedLeftPurpleOnly extends LinearOpMode {
                 hardwareMap.get(WebcamName.class, "Webcam 1"), detectionProcessor);
 
         //scan for spikemark
-        scanSpikeMark();
+        //scanSpikeMark();
 
         // Wait for the DS start button to be touched.
         waitForStart();
@@ -150,7 +150,7 @@ public class RedLeftPurpleOnly extends LinearOpMode {
 
     //wait for the camera processor to start working
     private void waitForProcessor() {
-        while(opModeInInit() && !detectionProcessor.getActivity()) {
+        while(opModeIsActive() && !detectionProcessor.getActivity()) {
             telemetry.addLine("Waiting for camera...");
             telemetry.update();
         }
@@ -163,14 +163,14 @@ public class RedLeftPurpleOnly extends LinearOpMode {
         if(!detectionProcessor.getActivity()) {
             //wait for camera processor
             waitForProcessor();
-
-            //scan for spikemark 10 times with a 10 ms delay and print selection
-            for(int i = 0; i < 10; i++) {
-                spikeMark = detectionProcessor.scanForSpikeMark();
-                sleep(10);
-            }
-            telemetry.addData("Spike mark selected", spikeMark);
-            telemetry.update();
         }
+
+        //scan for spikemark 10 times with a 10 ms delay and print selection
+        for(int i = 0; i < 10; i++) {
+            spikeMark = detectionProcessor.scanForSpikeMark();
+            sleep(10);
+        }
+        telemetry.addData("Spike mark selected", spikeMark);
+        telemetry.update();
     }
 }
