@@ -203,14 +203,6 @@ public class TeleOpMode extends OpMode {
             }
         }
 
-        //test update pid
-        if(gamepad2.left_bumper) {
-            if(lastKeyPressed.equals("none")) {
-                lastKeyPressed = "left_bumper";
-                Arm.updatePIDF();
-            }
-        }
-
 
         //gamepad2 single button press reset
         if(!gamepad2.a && !gamepad2.x && !gamepad2.y && !gamepad2.dpad_left
