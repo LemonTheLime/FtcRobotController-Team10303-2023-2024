@@ -25,11 +25,11 @@ public class ArmControl {
     //hardware fields
     private DcMotorEx leftMotor = null;
     private DcMotorEx rightMotor = null;
-    //motor specific constants
-    private int ticksPerRev = 288;
+    //motor specific constants      -trying hd hex motor
+    private int ticksPerRev = 28;
     private double gearRatio = 32.0 / 10.0;
     private int armVelocity = 300; //ticks per second
-    private double power = 0.5;
+    private double power = 1;
     private int leftEncoderValue;
     private int rightEncoderValue;
     //rotation constants
@@ -45,8 +45,8 @@ public class ArmControl {
     private int exEncoderCount = 0;
 
     //config
-    public static double kP = 60;
-    public static double kI = 6;
+    public static double kP = 10;
+    public static double kI = 0.05;
     public static double kD = 0;
     public static double kF = 0;
     public static int tolerance = 5;

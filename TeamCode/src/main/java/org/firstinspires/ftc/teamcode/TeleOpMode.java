@@ -62,7 +62,7 @@ public class TeleOpMode extends OpMode {
         //Launcher control
         Launcher = new LauncherControl(hardwareMap, telemetry);
 
-        Arm.updatePIDF();
+        //Arm.updatePIDF();
     }
 
     //TeleOp init
@@ -209,6 +209,12 @@ public class TeleOpMode extends OpMode {
                 && !gamepad2.dpad_right && !gamepad2.dpad_up
                 && !gamepad2.dpad_down && !gamepad2.left_bumper) {
             lastKeyPressed = "none";
+        }
+
+        //testing update pidf
+        if(gamepad2.left_bumper) {
+            Arm.updatePIDF();
+            telemetry.addLine("Something");
         }
     }
 
