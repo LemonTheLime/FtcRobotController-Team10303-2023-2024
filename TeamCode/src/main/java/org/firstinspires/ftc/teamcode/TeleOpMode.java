@@ -213,8 +213,8 @@ public class TeleOpMode extends OpMode {
 
         //testing update pidf
         if(gamepad2.left_bumper) {
-            Arm.updatePIDF();
-            telemetry.addLine("Something");
+            //Arm.updatePIDF();
+            //telemetry.addLine("Something");
         }
     }
 

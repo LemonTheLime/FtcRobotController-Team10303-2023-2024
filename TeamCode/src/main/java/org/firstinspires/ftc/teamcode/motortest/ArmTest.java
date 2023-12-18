@@ -13,7 +13,7 @@ public class ArmTest extends LinearOpMode {
         motor = hardwareMap.get(DcMotorEx.class, "rightArm");
 
         waitForStart();
-        motor.setPower(1);
+        motor.setPower(0.4);
         sleep(10000);
         motor.setPower(0);
     }

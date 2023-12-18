@@ -26,10 +26,10 @@ public class ArmControl {
     private DcMotorEx leftMotor = null;
     private DcMotorEx rightMotor = null;
     //motor specific constants      -trying hd hex motor
-    private int ticksPerRev = 28;
+    private int ticksPerRev = (int)(560 * 0.9);
     private double gearRatio = 32.0 / 10.0;
     private int armVelocity = 300; //ticks per second
-    private double power = 1;
+    private double power = 0.4;
     private int leftEncoderValue;
     private int rightEncoderValue;
     //rotation constants
@@ -37,7 +37,7 @@ public class ArmControl {
     private double rotation; //current angle in degrees, 0 is terminal x axis
     private double targetRotation = offset; //target rotation
     private double maxRotation = offset; //arm starts off here
-    private double minRotation = -30.0;
+    private double minRotation = -38.0;
     private double deliverRotation = 40; //teleop
     private double autoDeliverRotation = 10; //autonomous
 
@@ -119,8 +119,11 @@ public class ArmControl {
             rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             //set motor velocities
-            //leftMotor.setVelocity(armVelocity);
-            //rightMotor.setVelocity(armVelocity);
+            if(Math.abs(targetRotation - rotation) > 90) {
+                power = 0.3;
+            } else {
+                power = 0.4;
+            }
             rightMotor.setPower(power);
         }
     }
@@ -142,7 +145,7 @@ public class ArmControl {
             targetRotation += angle;
 
             //arm having encoder static issues
-            /*
+
             if (targetRotation < minRotation) {
                 targetRotation = minRotation;
             }
@@ -150,7 +153,7 @@ public class ArmControl {
                 targetRotation = maxRotation;
             }
 
-             */
+
 
             //rotate the arm to the target
             goToTargetRotation(targetRotation);
