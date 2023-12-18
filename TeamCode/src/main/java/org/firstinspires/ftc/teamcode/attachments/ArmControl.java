@@ -40,6 +40,8 @@ public class ArmControl {
     private double minRotation = -38.0;
     private double deliverRotation = 40; //teleop
     private double autoDeliverRotation = 10; //autonomous
+    //other
+    private boolean goingToGround = false; //ground call field
 
     private DcMotorEx exEncoder = null;
     private int exEncoderCount = 0;
@@ -120,9 +122,9 @@ public class ArmControl {
 
             //set motor velocities
             if(Math.abs(targetRotation - rotation) > 90) {
-                power = 0.3;
-            } else {
                 power = 0.4;
+            } else {
+                power = 0.2;
             }
             rightMotor.setPower(power);
         }
@@ -163,7 +165,13 @@ public class ArmControl {
     //preset arm rotation to ground
     public void ground() {
         if(status) {
-            targetRotation = minRotation;
+            if(rotation > 10) {
+                targetRotation = 0;
+                goingToGround = true;
+            } else {
+                targetRotation = minRotation;
+                goingToGround = false;
+            }
             goToTargetRotation(targetRotation);
         }
     }
@@ -220,5 +228,10 @@ public class ArmControl {
             return false;
         }
         return false;
+    }
+
+    //return the current ground call
+    public boolean returnGroundCall() {
+        return goingToGround;
     }
 }

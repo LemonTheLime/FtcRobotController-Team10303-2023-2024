@@ -24,6 +24,7 @@ public class TeleOpMode extends OpMode {
     private ArmControl Arm = null;
     private double armRotation;
     private double armSpeed = 1.5;
+    private boolean armToGround = false;
     //claw
     private ClawControl Claw = null;
     private double pitchRotation;
@@ -92,6 +93,11 @@ public class TeleOpMode extends OpMode {
     private void runAttachments() {
         //run arm
         Arm.rotate(armRotation * armSpeed);
+        if(armToGround) {
+            //arm to ground state
+            Arm.ground();
+            armToGround = Arm.returnGroundCall();
+        }
         //run claws
         Claw.rotate(pitchRotation * pitchSpeed);
         if(changeLeftClaw) {
@@ -163,7 +169,8 @@ public class TeleOpMode extends OpMode {
             if(lastKeyPressed.equals("none")) {
                 lastKeyPressed = "x";
                 Claw.ground();
-                Arm.ground();
+                //Arm.ground();
+                armToGround = true;
             }
         }
         //arm to reset state
