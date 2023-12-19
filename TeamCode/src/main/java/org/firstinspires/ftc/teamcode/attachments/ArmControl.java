@@ -25,11 +25,11 @@ public class ArmControl {
     //hardware fields
     private DcMotorEx leftMotor = null;
     private DcMotorEx rightMotor = null;
-    //motor specific constants
-    private int ticksPerRev = 288;
+    //motor specific constants      -trying hd hex motor
+    private int ticksPerRev = (int)(560 * 0.9);
     private double gearRatio = 32.0 / 10.0;
     private int armVelocity = 300; //ticks per second
-    private double power = 0.5;
+    private double power = 0.4;
     private int leftEncoderValue;
     private int rightEncoderValue;
     //rotation constants
@@ -37,16 +37,18 @@ public class ArmControl {
     private double rotation; //current angle in degrees, 0 is terminal x axis
     private double targetRotation = offset; //target rotation
     private double maxRotation = offset; //arm starts off here
-    private double minRotation = -30.0;
+    private double minRotation = -38.0;
     private double deliverRotation = 40; //teleop
     private double autoDeliverRotation = 10; //autonomous
+    //other
+    private boolean goingToGround = false; //ground call field
 
     private DcMotorEx exEncoder = null;
     private int exEncoderCount = 0;
 
     //config
-    public static double kP = 60;
-    public static double kI = 6;
+    public static double kP = 10;
+    public static double kI = 0.05;
     public static double kD = 0;
     public static double kF = 0;
     public static int tolerance = 5;
@@ -119,8 +121,11 @@ public class ArmControl {
             rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             //set motor velocities
-            //leftMotor.setVelocity(armVelocity);
-            //rightMotor.setVelocity(armVelocity);
+            if(Math.abs(targetRotation - rotation) > 90) {
+                power = 0.4;
+            } else {
+                power = 0.2;
+            }
             rightMotor.setPower(power);
         }
     }
@@ -142,7 +147,7 @@ public class ArmControl {
             targetRotation += angle;
 
             //arm having encoder static issues
-            /*
+
             if (targetRotation < minRotation) {
                 targetRotation = minRotation;
             }
@@ -150,7 +155,7 @@ public class ArmControl {
                 targetRotation = maxRotation;
             }
 
-             */
+
 
             //rotate the arm to the target
             goToTargetRotation(targetRotation);
@@ -160,7 +165,13 @@ public class ArmControl {
     //preset arm rotation to ground
     public void ground() {
         if(status) {
-            targetRotation = minRotation;
+            if(rotation > 10) {
+                targetRotation = 0;
+                goingToGround = true;
+            } else {
+                targetRotation = minRotation;
+                goingToGround = false;
+            }
             goToTargetRotation(targetRotation);
         }
     }
@@ -217,5 +228,10 @@ public class ArmControl {
             return false;
         }
         return false;
+    }
+
+    //return the current ground call
+    public boolean returnGroundCall() {
+        return goingToGround;
     }
 }
