@@ -105,7 +105,7 @@ public class BlueLeft extends LinearOpMode {
         lTraj4 = drive.trajectoryBuilder(lTraj3.end())
                 .strafeRight(17)
                 .addTemporalMarker(0, () -> {
-                    Arm.reset();
+                    Arm.autoReset();
                 })
                 .build();
         lTraj5 = drive.trajectoryBuilder(lTraj4.end())
@@ -125,7 +125,7 @@ public class BlueLeft extends LinearOpMode {
         Claw.openRightClaw();
         sleep(1000);
         //retract
-        Arm.armUp();
+        Arm.autoArmUp();
         Claw.reset();
         waitForArm();
         //park
@@ -155,7 +155,7 @@ public class BlueLeft extends LinearOpMode {
         mTraj4 = drive.trajectoryBuilder(mTraj3.end())
                 .strafeRight(23)
                 .addTemporalMarker(0, () -> {
-                    Arm.reset();
+                    Arm.autoReset();
                     Claw.reset();
                 })
                 .build();
@@ -176,7 +176,7 @@ public class BlueLeft extends LinearOpMode {
         Claw.openRightClaw();
         sleep(1000);
         //retract
-        Arm.armUp();
+        Arm.autoArmUp();
         waitForArm();
         //park
         drive.followTrajectory(mTraj4);
@@ -208,7 +208,7 @@ public class BlueLeft extends LinearOpMode {
         rTraj4 = drive.trajectoryBuilder(rTraj3.end())
                 .strafeRight(29)
                 .addTemporalMarker(0, () -> {
-                    Arm.reset();
+                    Arm.autoReset();
                     Claw.reset();
                 })
                 .build();
@@ -230,7 +230,7 @@ public class BlueLeft extends LinearOpMode {
         Claw.openRightClaw();
         sleep(1000);
         //retract
-        Arm.armUp();
+        Arm.autoArmUp();
         waitForArm();
         //parkract and park
         drive.followTrajectory(rTraj4);
@@ -239,7 +239,7 @@ public class BlueLeft extends LinearOpMode {
     }
     //wait for the arm and claw to deliver
     private void waitForArm() {
-        while(opModeIsActive() && !Arm.finishedDelivery()) {
+        while(opModeIsActive() && !Arm.autoFinishedDelivery()) {
             //wait
         }
         sleep(10);

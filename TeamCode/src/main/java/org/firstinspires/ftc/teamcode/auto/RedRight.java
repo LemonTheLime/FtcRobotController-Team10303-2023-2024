@@ -10,7 +10,6 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.attachments.ArmControl;
 import org.firstinspires.ftc.teamcode.attachments.ClawControl;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 /* RedRight
@@ -108,7 +107,7 @@ public class RedRight extends LinearOpMode {
         lTraj4 = drive.trajectoryBuilder(lTraj3.end())
                 .strafeLeft(29)
                 .addTemporalMarker(0, () -> {
-                    Arm.reset();
+                    Arm.autoReset();
                 })
                 .build();
         lTraj5 = drive.trajectoryBuilder(lTraj4.end())
@@ -129,7 +128,7 @@ public class RedRight extends LinearOpMode {
         Claw.openLeftClaw();
         sleep(1000);
         //retract
-        Arm.armUp();
+        Arm.autoArmUp();
         Claw.reset();
         waitForArm();
         //park
@@ -159,7 +158,7 @@ public class RedRight extends LinearOpMode {
         mTraj4 = drive.trajectoryBuilder(mTraj3.end())
                 .strafeLeft(23.5)
                 .addTemporalMarker(0, () -> {
-                    Arm.reset();
+                    Arm.autoReset();
                     Claw.reset();
                 })
                 .build();
@@ -180,7 +179,7 @@ public class RedRight extends LinearOpMode {
         Claw.openLeftClaw();
         sleep(1000);
         //retract
-        Arm.armUp();
+        Arm.autoArmUp();
         waitForArm();
         //park
         drive.followTrajectory(mTraj4);
@@ -209,7 +208,7 @@ public class RedRight extends LinearOpMode {
         rTraj4 = drive.trajectoryBuilder(rTraj3.end())
                 .strafeLeft(17.5)
                 .addTemporalMarker(0, () -> {
-                    Arm.reset();
+                    Arm.autoReset();
                     Claw.reset();
                 })
                 .build();
@@ -230,7 +229,7 @@ public class RedRight extends LinearOpMode {
         Claw.openLeftClaw();
         sleep(1000);
         //retract
-        Arm.armUp();
+        Arm.autoArmUp();
         waitForArm();
         //parkract and park
         drive.followTrajectory(rTraj4);
@@ -239,7 +238,7 @@ public class RedRight extends LinearOpMode {
     }
     //wait for the arm and claw to deliver
     private void waitForArm() {
-        while(opModeIsActive() && !Arm.finishedDelivery()) {
+        while(opModeIsActive() && !Arm.autoFinishedDelivery()) {
             //wait
         }
         sleep(10);

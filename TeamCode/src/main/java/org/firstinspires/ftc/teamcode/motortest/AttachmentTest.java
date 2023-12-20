@@ -30,7 +30,7 @@ public class AttachmentTest extends OpMode {
     public void loop() {
         //attachments only give telemetry and are not initialized
         Arm.telemetryOutput();
-        Arm.goToTargetRotation(90);
+        //Arm.goToTargetRotation(90);
         //Arm.rotate(-0.1);
 
         Claw.telemetryOutput();
