@@ -23,11 +23,10 @@ public class ArmControl {
     //telemetry
     private Telemetry t = null;
     //motor specific constants
-    private int ticksPerRev = (int)560;
-    private double gearRatio = 32.0 / 10.0 * 0.9;
+    private final int TICKS_PER_REV = 560;
+    private final double GEAR_RATIO = 32.0 / 10.0 * 0.9;
     private double power = 0.4;
-    private int leftEncoderValue;
-    private int rightEncoderValue;
+    private int armEncoderValue;
     //rotation constants
     private double offset = 180.0; //starting angle
     private double rotation; //current angle in degrees, 0 is terminal x axis
@@ -40,7 +39,6 @@ public class ArmControl {
     private final double AUTO_DELIVER_ROTATION = 10; //autonomous
     //state
     private ArmState state = ArmState.INITIAL;
-    private boolean goingToGround = false; //ground call field
 
     //config
     public static double kP = 10;
@@ -66,19 +64,14 @@ public class ArmControl {
     //initialize motor hardware
     private void initHardware() {
         //get motors from ids
-        //leftMotor = hardwareMap.get(DcMotorEx.class, "leftArm");
         armMotor = hardwareMap.get(DcMotorEx.class, "Arm");
 
         //reverse motors here if needed:
-        //arm rotating out should be negative encoder changes for both motors
         armMotor.setDirection(DcMotor.Direction.REVERSE);
 
         //set motors to run with encoders
-        //leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
     }
 
     //initialize arm control mechanism
@@ -91,28 +84,26 @@ public class ArmControl {
         getEncoderValues();
         t.addLine("ArmControl: ");
         t.addData("status", status);
-        t.addData("leftEncoderValue", leftEncoderValue);
-        t.addData("rightEncoderValue", rightEncoderValue);
+        t.addData("rightEncoderValue", armEncoderValue);
         t.addData("rotation", rotation);
         t.addData("targetRotation", targetRotation);
         t.addLine();
     }
 
-    //rotates arm to target position
+    //rotates arm to a target position
     private void goToTargetRotation(double angle) {
         if(status) {
+            //arm will not repeatedly set the target to the same value
             if(angle != pastTargetRotation) {
                 //get encoder targets
                 getEncoderValues();
-                int targetValue = (int) (ticksPerRev / 360.0 * (angle - offset) * gearRatio);
+                int targetValue = (int) (TICKS_PER_REV / 360.0 * (angle - offset) * GEAR_RATIO);
                 t.addData("targetValue", targetValue);
 
                 //set motor targets
-                //leftMotor.setTargetPosition(targetValue);
                 armMotor.setTargetPosition(targetValue);
 
                 //set motors to run with position
-                //leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                 //set power
@@ -129,7 +120,10 @@ public class ArmControl {
                     case INITIAL:
                         power = 0.0;
                         break;
+                    case MOVING_TO_DELIVER:
                     case DELIVER:
+                    case MOVING_TO_CUSTOM:
+                    case CUSTOM:
                     case AUTO:
                         power = 0.3;
                         break;
@@ -147,8 +141,8 @@ public class ArmControl {
     private void getEncoderValues() {
         if(status) {
             //leftEncoderValue = leftMotor.getCurrentPosition();
-            rightEncoderValue = armMotor.getCurrentPosition();
-            rotation = offset + (double) rightEncoderValue / ticksPerRev * 360.0 / gearRatio;
+            armEncoderValue = armMotor.getCurrentPosition();
+            rotation = offset + (double) armEncoderValue / TICKS_PER_REV * 360.0 / GEAR_RATIO;
         }
     }
 
@@ -184,17 +178,14 @@ public class ArmControl {
     public void deliver() {
         if(status) {
             if(state != ArmState.DELIVER && state != ArmState.MOVING_TO_DELIVER) {
-                state = ArmState.DELIVER;
+                state = ArmState.MOVING_TO_DELIVER;
             }
-            targetRotation = DELIVER_ROTATION;
-            goToTargetRotation(targetRotation);
         }
     }
 
     //TELEOP: reset the encoders (arm should be at reset state)
     public void resetEncoder() {
         if(status) {
-            //leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             targetRotation = 180;
         }
@@ -203,21 +194,21 @@ public class ArmControl {
     //TELEOP: rotates the target arm by an angle change
     public void rotate(double angle) {
         if(status) {
-            //set the targetRotation
-            targetRotation += angle;
-
-            //arm boundaries
-            if (targetRotation < MIN_ROTATION) {
-                targetRotation = MIN_ROTATION;
-            }
-            if (targetRotation > MAX_ROTATION) {
-                targetRotation = MAX_ROTATION;
-            }
-
             //rotate the arm to the target if there is change
             if(angle != 0) {
+                //set the targetRotation to current angle + change in angle
+                getEncoderValues();
+                targetRotation = rotation + angle;
+
+                //arm boundaries
+                if (targetRotation < MIN_ROTATION) {
+                    targetRotation = MIN_ROTATION;
+                }
+                if (targetRotation > MAX_ROTATION) {
+                    targetRotation = MAX_ROTATION;
+                }
+
                 state = ArmState.MOVING_TO_CUSTOM;
-                goToTargetRotation(targetRotation);
             }
         }
     }
@@ -228,39 +219,66 @@ public class ArmControl {
         getEncoderValues();
         switch (state) {
             case MOVING_TO_GROUND1:
-                targetRotation = 0;
-                goToTargetRotation(targetRotation);
                 if(rotation < (0 + tolerance)) {
                     state = ArmState.MOVING_TO_GROUND2;
+                } else {
+                    targetRotation = 0;
+                    goToTargetRotation(targetRotation);
                 }
                 break;
             case MOVING_TO_GROUND2:
-                targetRotation = MIN_ROTATION;
-                goToTargetRotation(targetRotation);
                 if(rotation < (MIN_ROTATION + tolerance)) {
                     state = ArmState.GROUND;
+                } else {
+                    targetRotation = MIN_ROTATION;
+                    goToTargetRotation(targetRotation);
                 }
                 break;
-            case MOVING_TO_INITIAL1:
-                targetRotation = 90;
+            case GROUND:
+                targetRotation = MIN_ROTATION;
                 goToTargetRotation(targetRotation);
+                break;
+            case MOVING_TO_INITIAL1:
                 if(rotation > (90 - tolerance)) {
                     state = ArmState.MOVING_TO_INITIAL2;
+                } else {
+                    targetRotation = 90;
+                    goToTargetRotation(targetRotation);
                 }
                 break;
             case MOVING_TO_INITIAL2:
-                targetRotation = MAX_ROTATION;
-                goToTargetRotation(targetRotation);
                 if(rotation > (MAX_ROTATION - tolerance)) {
                     state = ArmState.INITIAL;
+                } else {
+                    targetRotation = MAX_ROTATION;
+                    goToTargetRotation(targetRotation);
                 }
                 break;
-            case MOVING_TO_DELIVER:
-                targetRotation = DELIVER_ROTATION;
+            case INITIAL:
+                targetRotation = MAX_ROTATION;
                 goToTargetRotation(targetRotation);
+                break;
+            case MOVING_TO_DELIVER:
                 if(rotation > (DELIVER_ROTATION - tolerance)) {
                     state = ArmState.DELIVER;
+                } else {
+                    targetRotation = DELIVER_ROTATION;
+                    goToTargetRotation(targetRotation);
                 }
+                break;
+            case DELIVER:
+                targetRotation = DELIVER_ROTATION;
+                goToTargetRotation(targetRotation);
+                break;
+            case MOVING_TO_CUSTOM:
+                if(Math.abs(rotation - targetRotation) < tolerance) {
+                    state = ArmState.CUSTOM;
+                } else {
+                    goToTargetRotation(targetRotation); //target rotation already changed in rotate()
+                }
+                break;
+            case CUSTOM:
+                goToTargetRotation(targetRotation); //target rotation already changed in rotate()
                 break;
         }
     }
@@ -292,15 +310,12 @@ public class ArmControl {
         }
     }
 
-    //AUTONOMOUS: waits until the arm has delivered
-    public boolean autoFinishedDelivery() {
+    //AUTONOMOUS: checks if the arm motor is busy
+    public boolean autoIsBusy() {
         if(status) {
             double tolerance = 10; //degree tolerance
             getEncoderValues();
-            if (Math.abs(rotation - targetRotation) < tolerance) {
-                return true;
-            }
-            return false;
+            return Math.abs(rotation - targetRotation) > tolerance;
         }
         return false;
     }

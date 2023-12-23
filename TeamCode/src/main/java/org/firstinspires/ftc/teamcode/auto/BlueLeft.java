@@ -239,7 +239,7 @@ public class BlueLeft extends LinearOpMode {
     }
     //wait for the arm and claw to deliver
     private void waitForArm() {
-        while(opModeIsActive() && !Arm.autoFinishedDelivery()) {
+        while(opModeIsActive() && Arm.autoIsBusy()) {
             //wait
         }
         sleep(10);

@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.attachments.LauncherControl;
 @TeleOp(name = "TeleOpMode")
 public class TeleOpMode extends OpMode {
 
-    //FIELDS
     //drivetrain
     private DcMotor leftFront = null;
     private DcMotor leftRear = null;
@@ -23,12 +22,11 @@ public class TeleOpMode extends OpMode {
     //arm
     private ArmControl Arm = null;
     private double armRotation;
-    private double armSpeed = 1.5;
-    private boolean armToGround = false;
+    private final double ARM_SPEED = 1.5;
     //claw
     private ClawControl Claw = null;
     private double pitchRotation;
-    private double pitchSpeed = 0.02;
+    private final double PITCH_SPEED = 0.02;
     private boolean changeLeftClaw = false;
     private boolean changeRightClaw = false;
     private boolean changeAllClaw = false;
@@ -38,14 +36,13 @@ public class TeleOpMode extends OpMode {
     //gamepads
     private String lastKeyPressed = "";
 
-
+    //create hardware map
     public void init() {
-        //init drivetrain hardware
+        //drivetrain hardware and referse left wheels
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
         leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
         rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
         rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
-        //reverse left wheels
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftRear.setDirection(DcMotor.Direction.REVERSE);
         //init motor power
@@ -66,7 +63,7 @@ public class TeleOpMode extends OpMode {
         //Arm.updatePIDF();
     }
 
-    //TeleOp init
+    //TeleOp init the motors
     public void start() {
         Arm.init();
         Claw.init();
@@ -92,10 +89,10 @@ public class TeleOpMode extends OpMode {
     //run the attachments
     private void runAttachments() {
         //run arm
-        Arm.update();
-        Arm.rotate(armRotation * armSpeed);
+        Arm.rotate(armRotation * ARM_SPEED);
+        Arm.update(); //arm will run depending on current arm state
         //run claws
-        Claw.rotate(pitchRotation * pitchSpeed);
+        Claw.rotate(pitchRotation * PITCH_SPEED);
         if(changeLeftClaw) {
             changeLeftClaw = false;
             Claw.changeLeft();
@@ -146,11 +143,7 @@ public class TeleOpMode extends OpMode {
         pitchRotation = -gamepad2.right_stick_y; //moving stick up will flip the claw out
 
         //hold b for launcher (both needed)
-        if(gamepad1.b && gamepad2.b) {
-            runLauncher = true;
-        } else {
-            runLauncher = false;
-        }
+        runLauncher = gamepad1.b && gamepad2.b;
 
         //SINGLE PRESS BUTTONS
         //arm prepares to drop pixel
@@ -214,10 +207,13 @@ public class TeleOpMode extends OpMode {
         }
 
         //testing update pidf
+        /*
         if(gamepad2.left_bumper) {
-            //Arm.updatePIDF();
-            //telemetry.addLine("Something");
+            Arm.updatePIDF();
+            telemetry.addLine("Something");
         }
+
+         */
     }
 
     //telemetry
