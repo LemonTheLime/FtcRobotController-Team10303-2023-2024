@@ -22,7 +22,7 @@ public class TeleOpMode extends OpMode {
     //arm
     private ArmControl Arm = null;
     private double armRotation;
-    private final double ARM_SPEED = 1.5;
+    private final double ARM_SPEED = 12.0;
     //claw
     private ClawControl Claw = null;
     private double pitchRotation;
@@ -150,6 +150,7 @@ public class TeleOpMode extends OpMode {
         if(gamepad2.a) {
             if(lastKeyPressed.equals("none")) {
                 lastKeyPressed = "a";
+                Claw.deliver();
                 Arm.deliver();
             }
         }

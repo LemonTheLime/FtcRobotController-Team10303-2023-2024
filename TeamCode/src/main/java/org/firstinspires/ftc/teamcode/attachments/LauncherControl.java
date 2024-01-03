@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /* LauncherControl
- * runs the motor for the drone launcher
+ * runs the servo for the drone launcher
  */
 public class LauncherControl {
 

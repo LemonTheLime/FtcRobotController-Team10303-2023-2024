@@ -63,7 +63,7 @@ public class ArmControl {
     //initialize motor hardware
     private void initHardware() {
         //get motors from ids
-        armMotor = hardwareMap.get(DcMotorEx.class, "Arm");
+        armMotor = hardwareMap.get(DcMotorEx.class, "arm");
 
         //reverse motors here if needed:
         armMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -109,8 +109,10 @@ public class ArmControl {
                 //set power
                 switch (state) {
                     case MOVING_TO_GROUND1:
-                    case MOVING_TO_INITIAL1:
                         power = 0.4;
+                        break;
+                    case MOVING_TO_INITIAL1:
+                        power = 0.6;
                         break;
                     case MOVING_TO_GROUND2:
                     case MOVING_TO_INITIAL2:
@@ -149,9 +151,12 @@ public class ArmControl {
     //TELEOP: set arm state to ground preset
     public void ground() {
         if(status) {
+            if(state == ArmState.INITIAL) {
+                resetEncoder();
+            }
             if(state != ArmState.GROUND && state != ArmState.MOVING_TO_GROUND1
             && state != ArmState.MOVING_TO_GROUND2) {
-                if(rotation > 0) {
+                if(rotation > 90) {
                     state = ArmState.MOVING_TO_GROUND1;
                 } else {
                     state = ArmState.MOVING_TO_GROUND2;
@@ -165,7 +170,7 @@ public class ArmControl {
         if(status) {
             if(state != ArmState.INITIAL && state != ArmState.MOVING_TO_INITIAL1
                     && state != ArmState.MOVING_TO_INITIAL2) {
-                if(rotation > 0) {
+                if(rotation < 0) {
                     state = ArmState.MOVING_TO_INITIAL1;
                 } else {
                     state = ArmState.MOVING_TO_INITIAL2;
@@ -177,13 +182,16 @@ public class ArmControl {
     //TELEOP: preset arm rotation for delivering pixel to backdrop
     public void deliver() {
         if(status) {
+            if(state == ArmState.INITIAL) {
+                resetEncoder();
+            }
             if(state != ArmState.DELIVER && state != ArmState.MOVING_TO_DELIVER) {
                 state = ArmState.MOVING_TO_DELIVER;
             }
         }
     }
 
-    //TELEOP: reset the encoders (arm should be at reset state)
+    //TELEOP: reset the encoders (arm should be at initial state)
     public void resetEncoder() {
         if(status) {
             armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -196,6 +204,9 @@ public class ArmControl {
         if(status) {
             //rotate the arm to the target if there is change
             if(angle != 0) {
+                if(state == ArmState.INITIAL) {
+                    resetEncoder();
+                }
                 //set the targetRotation to current angle + change in angle
                 getEncoderValues();
                 targetRotation = rotation + angle;
@@ -209,17 +220,21 @@ public class ArmControl {
                 }
 
                 state = ArmState.MOVING_TO_CUSTOM;
+            } else {
+                if(state == ArmState.MOVING_TO_CUSTOM) {
+                    state = ArmState.CUSTOM;
+                }
             }
         }
     }
 
     //TELEOP: check for the current arm state and perform respective actions
     public void update() {
-        double tolerance = 5;
+        double tolerance = 2.5;
         getEncoderValues();
         switch (state) {
             case MOVING_TO_GROUND1:
-                if(rotation < (0 + tolerance)) {
+                if(rotation < (90 + tolerance)) {
                     state = ArmState.MOVING_TO_GROUND2;
                 } else {
                     targetRotation = 0;
@@ -271,12 +286,6 @@ public class ArmControl {
                 goToTargetRotation(targetRotation);
                 break;
             case MOVING_TO_CUSTOM:
-                if(Math.abs(rotation - targetRotation) < tolerance) {
-                    state = ArmState.CUSTOM;
-                } else {
-                    goToTargetRotation(targetRotation); //target rotation already changed in rotate()
-                }
-                break;
             case CUSTOM:
                 goToTargetRotation(targetRotation); //target rotation already changed in rotate()
                 break;
