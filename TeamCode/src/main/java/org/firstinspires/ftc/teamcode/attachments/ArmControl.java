@@ -16,7 +16,6 @@ public class ArmControl {
 
     //hardware
     private HardwareMap hardwareMap = null;
-    //private DcMotorEx leftMotor = null; deprecate left arm
     private DcMotorEx armMotor = null;
     //attachment status
     private boolean status;
@@ -84,7 +83,8 @@ public class ArmControl {
         getEncoderValues();
         t.addLine("ArmControl: ");
         t.addData("status", status);
-        t.addData("rightEncoderValue", armEncoderValue);
+        t.addData("state", state);
+        t.addData("armEncoderValue", armEncoderValue);
         t.addData("rotation", rotation);
         t.addData("targetRotation", targetRotation);
         t.addLine();
