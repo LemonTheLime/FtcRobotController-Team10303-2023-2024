@@ -35,7 +35,7 @@ public class ArmControl {
     private final double MAX_ROTATION = 180.0; //arm starts off here
     private final double MIN_ROTATION = -38.0;
     private final double DELIVER_ROTATION = 40; //teleop
-    private final double AUTO_DELIVER_ROTATION = 10; //autonomous
+    private final double AUTO_DELIVER_ROTATION = 20; //autonomous
     //state
     private ArmState state = ArmState.INITIAL;
 
@@ -93,13 +93,13 @@ public class ArmControl {
     //rotates arm to a target position
     private void goToTargetRotation(double angle) {
         if(status) {
+            //get encoder targets
+            getEncoderValues();
+            int targetValue = (int) (TICKS_PER_REV / 360.0 * (angle - offset) * GEAR_RATIO);
+            t.addData("targetValue", targetValue);
+
             //arm will not repeatedly set the target to the same value
             if(angle != pastTargetRotation) {
-                //get encoder targets
-                getEncoderValues();
-                int targetValue = (int) (TICKS_PER_REV / 360.0 * (angle - offset) * GEAR_RATIO);
-                t.addData("targetValue", targetValue);
-
                 //set motor targets
                 armMotor.setTargetPosition(targetValue);
 
@@ -132,6 +132,18 @@ public class ArmControl {
                 }
 
                 armMotor.setPower(power);
+            } else {
+                if(state == ArmState.INITIAL || state == ArmState.GROUND) {
+                    //set motor targets
+                    armMotor.setTargetPosition(targetValue);
+
+                    //set motors to run with position
+                    armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    //zero power
+                    power = 0;
+                    armMotor.setPower(power);
+                }
             }
 
             //update past targetRotation
@@ -195,7 +207,17 @@ public class ArmControl {
     public void resetEncoder() {
         if(status) {
             armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            targetRotation = 180;
+            switch (state) {
+                case INITIAL:
+                    offset = 180.0;
+                    targetRotation = offset;
+                    break;
+                case GROUND:
+                    offset = -36.0;
+                    targetRotation = offset;
+            }
+
+            armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
     }
 
