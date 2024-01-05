@@ -33,6 +33,7 @@ public class ClawControl {
     private final double GROUND_PITCH = 0.713;
     private final double DELIVER_PITCH = 0.75;
     private final double AUTO_DELIVER_PITCH = 0.82;
+    //state
 
     //constructor
     public ClawControl(HardwareMap hwMap, Telemetry t) {
@@ -217,5 +218,10 @@ public class ClawControl {
             pitchLeft.setPosition(pitch);
             pitchRight.setPosition(pitch);
         }
+    }
+
+    //enum claw states
+    public enum ClawState {
+
     }
 }
