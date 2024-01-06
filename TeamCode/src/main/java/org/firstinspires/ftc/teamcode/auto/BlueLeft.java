@@ -87,7 +87,7 @@ public class BlueLeft extends LinearOpMode {
     private void buildLeftPixelTraj() {
         //deliver purple pixel
         lTraj1 = drive.trajectoryBuilder(new Pose2d())
-                .lineToSplineHeading(new Pose2d(-26.5, -3, Math.toRadians(25)))
+                .lineToSplineHeading(new Pose2d(-20.5, -3, Math.toRadians(25)))
                 .build();
         lTraj2 = drive.trajectoryBuilder(lTraj1.end())
                 .lineToSplineHeading(new Pose2d(-15, 0, Math.toRadians(90)))
@@ -96,7 +96,7 @@ public class BlueLeft extends LinearOpMode {
         //old -29
         lTraj3 = drive.trajectoryBuilder(lTraj2.end(), true)
                 .splineTo(new Vector2d(-17.5, -30), Math.toRadians(-90))
-                .addTemporalMarker(0, () -> {
+                .addTemporalMarker(1, () -> {
                     Arm.autoDeliver();
                     Claw.autoDeliver();
                 })
@@ -141,12 +141,12 @@ public class BlueLeft extends LinearOpMode {
                 .back(27.5)
                 .build();
         mTraj2 = drive.trajectoryBuilder(mTraj1.end())
-                .forward(10)
+                .forward(15)
                 .build();
         //deliver yellow pixel to backdrop
         mTraj3 = drive.trajectoryBuilder(mTraj2.end(), true)
-                .splineTo(new Vector2d(-24.5, -30), Math.toRadians(-90))
-                .addTemporalMarker(0, () -> {
+                .splineTo(new Vector2d(-24, -30.5), Math.toRadians(-90))
+                .addTemporalMarker(1, () -> {
                     Arm.autoDeliver();
                     Claw.autoDeliver();
                 })
@@ -198,15 +198,15 @@ public class BlueLeft extends LinearOpMode {
                 .build();
         //deliver yellow pixel to backdrop
         rTraj3 = drive.trajectoryBuilder(rTraj2.end(), true)
-                .splineTo(new Vector2d(-30, -30), Math.toRadians(-90))
-                .addTemporalMarker(0, () -> {
+                .splineTo(new Vector2d(-30, -31), Math.toRadians(-90))
+                .addTemporalMarker(1, () -> {
                     Arm.autoDeliver();
                     Claw.autoDeliver();
                 })
                 .build();
         //close arm and park
         rTraj4 = drive.trajectoryBuilder(rTraj3.end())
-                .strafeRight(29)
+                .strafeRight(30)
                 .addTemporalMarker(0, () -> {
                     Arm.autoReset();
                     Claw.reset();

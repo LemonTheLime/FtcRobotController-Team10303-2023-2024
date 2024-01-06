@@ -99,8 +99,8 @@ public class RedRight extends LinearOpMode {
                 .build();
         //deliver yellow pixel to backdrop
         lTraj3 = drive.trajectoryBuilder(lTraj2.end(), true)
-                .splineTo(new Vector2d(-29, 30), Math.toRadians(90))
-                .addTemporalMarker(0, () -> {
+                .splineTo(new Vector2d(-29, 28), Math.toRadians(90))
+                .addTemporalMarker(1, () -> {
                     Arm.autoDeliver();
                     Claw.autoDeliver();
                 })
@@ -150,8 +150,8 @@ public class RedRight extends LinearOpMode {
                 .build();
         //deliver yellow pixel to backdrop
         mTraj3 = drive.trajectoryBuilder(mTraj2.end(), true)
-                .splineTo(new Vector2d(-23.5, 30), Math.toRadians(90))
-                .addTemporalMarker(0, () -> {
+                .splineTo(new Vector2d(-23.75, 29), Math.toRadians(90))
+                .addTemporalMarker(1, () -> {
                     Arm.autoDeliver();
                     Claw.autoDeliver();
                 })
@@ -200,8 +200,8 @@ public class RedRight extends LinearOpMode {
                 .build();
         //deliver yellow pixel to backdrop
         rTraj3 = drive.trajectoryBuilder(rTraj2.end(), true)
-                .splineTo(new Vector2d(-17.5, 30), Math.toRadians(90))
-                .addTemporalMarker(0, () -> {
+                .splineTo(new Vector2d(-18, 29), Math.toRadians(90))
+                .addTemporalMarker(1, () -> {
                     Arm.autoDeliver();
                     Claw.autoDeliver();
                 })
@@ -243,7 +243,7 @@ public class RedRight extends LinearOpMode {
         while(opModeIsActive() && Arm.autoIsBusy()) {
             //wait
         }
-        sleep(10);
+        sleep(100);
     }
 
     //wait for the camera processor to start working
