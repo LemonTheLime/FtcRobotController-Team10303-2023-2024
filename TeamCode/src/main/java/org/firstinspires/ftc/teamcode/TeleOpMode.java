@@ -152,12 +152,12 @@ public class TeleOpMode extends OpMode {
             if(lastKeyPressed1.equals("none")) {
                 lastKeyPressed1 = "left_bumper";
                 speedRatio -= 0.15;
-                rotationRatio -= 0.13;
+                rotationRatio -= 0.15;
                 if(speedRatio <= 0) {
                     speedRatio += 0.15;
                 }
                 if(rotationRatio <= 0) {
-                    rotationRatio += 0.13;
+                    rotationRatio += 0.15;
                 }
             }
         }
@@ -167,12 +167,12 @@ public class TeleOpMode extends OpMode {
             if(lastKeyPressed1.equals("none")) {
                 lastKeyPressed1 = "right_bumper";
                 speedRatio += 0.15;
-                rotationRatio += 0.13;
+                rotationRatio += 0.15;
                 if(speedRatio > 1.5) {
                     speedRatio -= 0.15;
                 }
                 if(rotationRatio > 1.3) {
-                    rotationRatio -= 0.13;
+                    rotationRatio -= 0.15;
                 }
             }
         }
@@ -205,7 +205,7 @@ public class TeleOpMode extends OpMode {
         if(gamepad2.dpad_up) {
             if(lastKeyPressed2.equals("none")) {
                 lastKeyPressed2 = "dpad_up";
-                Arm.resetEncoder();
+                //Arm.resetEncoder();
             }
         }
         //change left claw
@@ -232,7 +232,7 @@ public class TeleOpMode extends OpMode {
 
 
         //gamepad1 single button press reset
-        if(!gamepad2.left_bumper && !gamepad1.right_bumper) {
+        if(!gamepad1.left_bumper && !gamepad1.right_bumper) {
             lastKeyPressed1 = "none";
         }
 
@@ -255,6 +255,13 @@ public class TeleOpMode extends OpMode {
 
     //telemetry
     private void telemetryOutput() {
+        telemetry.addLine("Drivetrain: ");
+        telemetry.addLine("status: true");
+        telemetry.addData("speedRatio", speedRatio);
+        telemetry.addData("rotationRatio", rotationRatio);
+        telemetry.addLine();
+
+        //attachments
         Arm.telemetryOutput();
         Claw.telemetryOutput();
         Launcher.telemetryOutput();
