@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -142,7 +141,7 @@ public class RedLeftPurpleOnly extends LinearOpMode {
     }
     //wait for the arm and claw to deliver
     private void waitForArm() {
-        while(opModeIsActive() && !Arm.finishedDelivery()) {
+        while(opModeIsActive() && Arm.autoIsBusy()) {
             //wait
         }
         sleep(10);

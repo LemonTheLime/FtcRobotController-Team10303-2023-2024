@@ -141,7 +141,7 @@ public class BlueRightPurpleOnly extends LinearOpMode {
     }
     //wait for the arm and claw to deliver
     private void waitForArm() {
-        while(opModeIsActive() && !Arm.finishedDelivery()) {
+        while(opModeIsActive() && Arm.autoIsBusy()) {
             //wait
         }
         sleep(10);

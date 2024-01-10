@@ -24,15 +24,16 @@ public class ClawControl {
     //claw constants
     private boolean leftOpen = false;
     private boolean rightOpen = false;
-    private double leftMin = 0.0;
-    private double leftMax = 0.5;
-    private double rightMin = 0.;
-    private double rightMax = 0.5;
+    private final double LEFT_MIN = 0.0;
+    private final double LEFT_MAX = 0.5;
+    private final double RIGHT_MIN = 0.0;
+    private final double RIGHT_MAX = 0.5;
     //pitch constants
     private double pitch = 0; //position of pitch servo
-    private double groundPitch = 0.713;
-    private double deliverPitch = 0.6;
-    private double autoDeliverPitch = 0.82;
+    private final double GROUND_PITCH = 0.713;
+    private final double DELIVER_PITCH = 0.75;
+    private final double AUTO_DELIVER_PITCH = 0.82;
+    //state
 
     //constructor
     public ClawControl(HardwareMap hwMap, Telemetry t) {
@@ -73,7 +74,7 @@ public class ClawControl {
     //open left claw
     public void openLeftClaw() {
         if(status) {
-            leftClaw.setPosition(leftMin);
+            leftClaw.setPosition(LEFT_MIN);
             leftOpen = true;
         }
     }
@@ -81,7 +82,7 @@ public class ClawControl {
     //close left claw
     public void closeLeftClaw() {
         if(status) {
-            leftClaw.setPosition(leftMax);
+            leftClaw.setPosition(LEFT_MAX);
             leftOpen = false;
         }
     }
@@ -101,7 +102,7 @@ public class ClawControl {
     //open right claw
     public void openRightClaw() {
         if(status) {
-            rightClaw.setPosition(rightMin);
+            rightClaw.setPosition(RIGHT_MIN);
             rightOpen = true;
         }
     }
@@ -109,7 +110,7 @@ public class ClawControl {
     //close right claw
     public void closeRightClaw() {
         if(status) {
-            rightClaw.setPosition(rightMax);
+            rightClaw.setPosition(RIGHT_MAX);
             rightOpen = false;
         }
     }
@@ -186,7 +187,7 @@ public class ClawControl {
     //ground pitch
     public void ground() {
         if(status) {
-            pitch = groundPitch;
+            pitch = GROUND_PITCH;
             pitchLeft.setPosition(pitch);
             pitchRight.setPosition(pitch);
         }
@@ -204,7 +205,7 @@ public class ClawControl {
     //deliver pitch for teleop
     public void deliver() {
         if(status) {
-            pitch = deliverPitch;
+            pitch = DELIVER_PITCH;
             pitchLeft.setPosition(pitch);
             pitchRight.setPosition(pitch);
         }
@@ -213,9 +214,14 @@ public class ClawControl {
     //deliver pitch for autonomous
     public void autoDeliver() {
         if(status) {
-            pitch = autoDeliverPitch;
+            pitch = AUTO_DELIVER_PITCH;
             pitchLeft.setPosition(pitch);
             pitchRight.setPosition(pitch);
         }
+    }
+
+    //enum claw states
+    public enum ClawState {
+
     }
 }

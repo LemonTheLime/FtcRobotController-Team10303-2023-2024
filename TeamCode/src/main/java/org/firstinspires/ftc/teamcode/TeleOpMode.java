@@ -11,24 +11,22 @@ import org.firstinspires.ftc.teamcode.attachments.LauncherControl;
 @TeleOp(name = "TeleOpMode")
 public class TeleOpMode extends OpMode {
 
-    //FIELDS
     //drivetrain
     private DcMotor leftFront = null;
     private DcMotor leftRear = null;
     private DcMotor rightFront = null;
     private DcMotor rightRear = null;
     double leftFrontPower, rightFrontPower, leftRearPower, rightRearPower;
-    double speedRatio = 0.75;
-    double rotationRatio = 0.67;
+    double speedRatio = 0.75; // 3/4
+    double rotationRatio = 0.67; // 2/3
     //arm
     private ArmControl Arm = null;
     private double armRotation;
-    private double armSpeed = 1.5;
-    private boolean armToGround = false;
+    private final double ARM_SPEED = 12.0;
     //claw
     private ClawControl Claw = null;
     private double pitchRotation;
-    private double pitchSpeed = 0.02;
+    private final double PITCH_SPEED = 0.02;
     private boolean changeLeftClaw = false;
     private boolean changeRightClaw = false;
     private boolean changeAllClaw = false;
@@ -36,16 +34,16 @@ public class TeleOpMode extends OpMode {
     private LauncherControl Launcher = null;
     private boolean runLauncher = false;
     //gamepads
-    private String lastKeyPressed = "";
+    private String lastKeyPressed1 = "none";
+    private String lastKeyPressed2 = "none";
 
-
+    //create hardware map
     public void init() {
-        //init drivetrain hardware
+        //drivetrain hardware and referse left wheels
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
         leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
         rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
         rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
-        //reverse left wheels
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftRear.setDirection(DcMotor.Direction.REVERSE);
         //init motor power
@@ -66,7 +64,7 @@ public class TeleOpMode extends OpMode {
         //Arm.updatePIDF();
     }
 
-    //TeleOp init
+    //TeleOp init the motors
     public void start() {
         Arm.init();
         Claw.init();
@@ -92,14 +90,10 @@ public class TeleOpMode extends OpMode {
     //run the attachments
     private void runAttachments() {
         //run arm
-        Arm.rotate(armRotation * armSpeed);
-        if(armToGround) {
-            //arm to ground state
-            Arm.ground();
-            armToGround = Arm.returnGroundCall();
-        }
+        Arm.rotate(armRotation * ARM_SPEED);
+        Arm.update(); //arm will run depending on current arm state
         //run claws
-        Claw.rotate(pitchRotation * pitchSpeed);
+        Claw.rotate(pitchRotation * PITCH_SPEED);
         if(changeLeftClaw) {
             changeLeftClaw = false;
             Claw.changeLeft();
@@ -150,83 +144,124 @@ public class TeleOpMode extends OpMode {
         pitchRotation = -gamepad2.right_stick_y; //moving stick up will flip the claw out
 
         //hold b for launcher (both needed)
-        if(gamepad1.b && gamepad2.b) {
-            runLauncher = true;
-        } else {
-            runLauncher = false;
-        }
+        runLauncher = gamepad1.b && gamepad2.b;
 
         //SINGLE PRESS BUTTONS
+        //decrease drivetrain speed and rotation ratios
+        if(gamepad1.left_bumper) {
+            if(lastKeyPressed1.equals("none")) {
+                lastKeyPressed1 = "left_bumper";
+                speedRatio -= 0.15;
+                rotationRatio -= 0.15;
+                if(speedRatio <= 0) {
+                    speedRatio += 0.15;
+                }
+                if(rotationRatio <= 0) {
+                    rotationRatio += 0.15;
+                }
+            }
+        }
+
+        //increase drivetrain speed and rotation ratios
+        if(gamepad1.right_bumper) {
+            if(lastKeyPressed1.equals("none")) {
+                lastKeyPressed1 = "right_bumper";
+                speedRatio += 0.15;
+                rotationRatio += 0.15;
+                if(speedRatio > 1.5) {
+                    speedRatio -= 0.15;
+                }
+                if(rotationRatio > 1.3) {
+                    rotationRatio -= 0.15;
+                }
+            }
+        }
+
         //arm prepares to drop pixel
         if(gamepad2.a) {
-            if(lastKeyPressed.equals("none")) {
-                lastKeyPressed = "a";
+            if(lastKeyPressed2.equals("none")) {
+                lastKeyPressed2 = "a";
+                Claw.deliver();
                 Arm.deliver();
             }
         }
         //arm to ground state
         if(gamepad2.x) {
-            if(lastKeyPressed.equals("none")) {
-                lastKeyPressed = "x";
+            if(lastKeyPressed2.equals("none")) {
+                lastKeyPressed2 = "x";
                 Claw.ground();
-                //Arm.ground();
-                armToGround = true;
+                Arm.ground();
             }
         }
         //arm to reset state
         if(gamepad2.y) {
-            if(lastKeyPressed.equals("none")) {
-                lastKeyPressed = "y";
+            if(lastKeyPressed2.equals("none")) {
+                lastKeyPressed2 = "y";
                 Arm.reset();
                 Claw.reset();
             }
         }
         //reset arm encoders
         if(gamepad2.dpad_up) {
-            if(lastKeyPressed.equals("none")) {
-                lastKeyPressed = "dpad_up";
-                Arm.resetEncoder();
+            if(lastKeyPressed2.equals("none")) {
+                lastKeyPressed2 = "dpad_up";
+                //Arm.resetEncoder();
             }
         }
         //change left claw
         if(gamepad2.dpad_left) {
-            if(lastKeyPressed.equals("none")) {
-                lastKeyPressed = "dpad_left";
+            if(lastKeyPressed2.equals("none")) {
+                lastKeyPressed2 = "dpad_left";
                 changeLeftClaw = true;
             }
         }
         //change right claw
         if(gamepad2.dpad_right) {
-            if(lastKeyPressed.equals("none")) {
-                lastKeyPressed = "dpad_right";
+            if(lastKeyPressed2.equals("none")) {
+                lastKeyPressed2 = "dpad_right";
                 changeRightClaw = true;
             }
         }
         //either open or close both claws
         if(gamepad2.dpad_down) {
-            if(lastKeyPressed.equals("none")) {
-                lastKeyPressed = "dpad_down";
+            if(lastKeyPressed2.equals("none")) {
+                lastKeyPressed2 = "dpad_down";
                 changeAllClaw = true;
             }
         }
 
 
+        //gamepad1 single button press reset
+        if(!gamepad1.left_bumper && !gamepad1.right_bumper) {
+            lastKeyPressed1 = "none";
+        }
+
         //gamepad2 single button press reset
         if(!gamepad2.a && !gamepad2.x && !gamepad2.y && !gamepad2.dpad_left
                 && !gamepad2.dpad_right && !gamepad2.dpad_up
                 && !gamepad2.dpad_down && !gamepad2.left_bumper) {
-            lastKeyPressed = "none";
+            lastKeyPressed2 = "none";
         }
 
         //testing update pidf
+        /*
         if(gamepad2.left_bumper) {
-            //Arm.updatePIDF();
-            //telemetry.addLine("Something");
+            Arm.updatePIDF();
+            telemetry.addLine("Something");
         }
+
+         */
     }
 
     //telemetry
     private void telemetryOutput() {
+        telemetry.addLine("Drivetrain: ");
+        telemetry.addLine("status: true");
+        telemetry.addData("speedRatio", speedRatio);
+        telemetry.addData("rotationRatio", rotationRatio);
+        telemetry.addLine();
+
+        //attachments
         Arm.telemetryOutput();
         Claw.telemetryOutput();
         Launcher.telemetryOutput();
