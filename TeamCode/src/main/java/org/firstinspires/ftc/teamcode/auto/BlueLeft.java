@@ -50,20 +50,18 @@ public class BlueLeft extends LinearOpMode {
         visionPortal = VisionPortal.easyCreateWithDefaults(
                 hardwareMap.get(WebcamName.class, "Webcam 1"), detectionProcessor);
 
-        //scan for spikemark
-        //scanSpikeMark();
-
         // Wait for the DS start button to be touched.
         waitForStart();
-
-        //scan for spikemark if not finished in init
-        scanSpikeMark();
 
         //init attachments
         Arm.init();
         Claw.init();
         Claw.closeLeftClaw();
         Claw.closeRightClaw();
+        sleep(500);
+
+        //scan for spikemark if not finished in init
+        scanSpikeMark();
 
         //start roadrunner
         if(spikeMark == 1) {
