@@ -33,7 +33,11 @@ public class ClawControl {
     private final double GROUND_PITCH = 0.713;
     private final double DELIVER_PITCH = 0.75;
     private final double AUTO_DELIVER_PITCH = 0.82;
-    //state
+    //armmotor rotation for deliver auto
+    private double armRotation;
+    //states
+    private ClawState clawState = ClawState.BOTH_CLOSE;
+    private PitchState pitchState = PitchState.MANUAL;
 
     //constructor
     public ClawControl(HardwareMap hwMap, Telemetry t) {
@@ -76,6 +80,7 @@ public class ClawControl {
         if(status) {
             leftClaw.setPosition(LEFT_MIN);
             leftOpen = true;
+            updateClawState();
         }
     }
 
@@ -84,6 +89,7 @@ public class ClawControl {
         if(status) {
             leftClaw.setPosition(LEFT_MAX);
             leftOpen = false;
+            updateClawState();
         }
     }
 
@@ -104,6 +110,7 @@ public class ClawControl {
         if(status) {
             rightClaw.setPosition(RIGHT_MIN);
             rightOpen = true;
+            updateClawState();
         }
     }
 
@@ -112,6 +119,7 @@ public class ClawControl {
         if(status) {
             rightClaw.setPosition(RIGHT_MAX);
             rightOpen = false;
+            updateClawState();
         }
     }
 
@@ -148,24 +156,43 @@ public class ClawControl {
         }
     }
 
+    //update the clawstate
+    private void updateClawState() {
+        if(leftOpen && rightOpen) {
+            clawState = ClawState.BOTH_OPEN;
+        }
+        if(!leftOpen && !rightOpen) {
+            clawState = ClawState.BOTH_CLOSE;
+        }
+        if(leftOpen && !rightOpen) {
+            clawState = ClawState.LEFT_OPEN_ONLY;
+        }
+        if(!leftOpen && rightOpen) {
+            clawState = ClawState.RIGHT_OPEN_ONLY;
+        }
+    }
+
     //pitch servo uses a finite state machine to be able to run with the motors
     //rotates the pitch servo
     public void rotate(double angle) {
         if(status) {
-            //magnitude of angle determines speed of pitch change
-            //speed pitch change cannot be to large or else arm will stutter
+            if(angle != 0) {
+                pitchState = PitchState.MANUAL;
+                //magnitude of angle determines speed of pitch change
+                //speed pitch change cannot be to large or else arm will stutter
 
-            //change pitch angle
-            pitch += angle;
-            if (pitch > 1) {
-                pitch = 1;
-            }
-            if (pitch < 0) {
-                pitch = 0;
-            }
+                //change pitch angle
+                pitch += angle;
+                if (pitch > 1) {
+                    pitch = 1;
+                }
+                if (pitch < 0) {
+                    pitch = 0;
+                }
 
-            //rotate servo to pitch angle
-            rotateTo(pitch);
+                //rotate servo to pitch angle
+                rotateTo(pitch);
+            }
         }
     }
 
@@ -205,6 +232,7 @@ public class ClawControl {
     //deliver pitch for teleop
     public void deliver() {
         if(status) {
+            pitchState = PitchState.DELIVER;
             pitch = DELIVER_PITCH;
             pitchLeft.setPosition(pitch);
             pitchRight.setPosition(pitch);
@@ -222,6 +250,15 @@ public class ClawControl {
 
     //enum claw states
     public enum ClawState {
+        BOTH_CLOSE,
+        BOTH_OPEN,
+        LEFT_OPEN_ONLY,
+        RIGHT_OPEN_ONLY
+    }
 
+    //enum pitch states
+    public enum PitchState {
+        MANUAL,
+        DELIVER
     }
 }
