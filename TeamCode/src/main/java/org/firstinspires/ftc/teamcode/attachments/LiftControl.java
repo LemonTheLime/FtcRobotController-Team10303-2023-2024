@@ -20,16 +20,16 @@ public class LiftControl {
     //telemetry
     private Telemetry t = null;
     //motor specific constants
-    private final int TICKS_PER_REV = 560;
-    private final double GEAR_RATIO = 1;
+    private static final int TICKS_PER_REV = 560;
+    private static final double GEAR_RATIO = 1;
     private double power = 1;
     private int leftEncoderValue;
     private int rightEncoderValue;
     private double targetRotation;
     private double pastTargetRotation;
     //rotation constants
-    private final double MIN_ROTATION = 0; //starting angle
-    private final double MAX_ROTATION = 7 * 2 * Math.PI; //7 rotations, each rotation decreases length
+    private static final double MIN_ROTATION = 0; //starting angle
+    private static final double MAX_ROTATION = 7 * 2 * Math.PI; //7 rotations, each rotation decreases length
     private double rotation; //current angle in degrees, 0 is terminal x axis
     //state
     private LiftControl.LiftState state = LiftControl.LiftState.INITIAL;

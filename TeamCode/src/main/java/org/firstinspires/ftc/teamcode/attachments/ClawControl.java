@@ -24,15 +24,15 @@ public class ClawControl {
     //claw constants
     private boolean leftOpen = false;
     private boolean rightOpen = false;
-    private final double LEFT_MIN = 0.0;
-    private final double LEFT_MAX = 0.5;
-    private final double RIGHT_MIN = 0.0;
-    private final double RIGHT_MAX = 0.5;
+    private static final double LEFT_MIN = 0.0;
+    private static final double LEFT_MAX = 0.5;
+    private static final double RIGHT_MIN = 0.0;
+    private static final double RIGHT_MAX = 0.5;
     //pitch constants
     private double pitch = 0; //position of pitch servo
-    private final double GROUND_PITCH = 0.713;
-    private final double DELIVER_PITCH = 0.75;
-    private final double AUTO_DELIVER_PITCH = 0.82;
+    private static final double GROUND_PITCH = 0.713;
+    private static final double DELIVER_PITCH = 0.75;
+    private static final double AUTO_DELIVER_PITCH = 0.82;
     //armmotor rotation for deliver auto
     private double armRotation;
     //states
@@ -69,6 +69,8 @@ public class ClawControl {
     public void telemetryOutput() {
         t.addLine("ClawControl: ");
         t.addData("status", status);
+        t.addData("clawState", clawState);
+        t.addData("pitchState", pitchState);
         t.addData("leftOpen", leftOpen);
         t.addData("rightOpen", rightOpen);
         t.addData("pitch", pitch);
@@ -199,15 +201,16 @@ public class ClawControl {
     //rotate pitch to a certain angle
     public void rotateTo(double angle) {
         if(status) {
-            if (pitch > 1) {
-                pitch = 1;
+            if (angle > 1) {
+                pitchLeft.setPosition(1);
+                pitchRight.setPosition(1);
+            } else if (angle < 0) {
+                pitchLeft.setPosition(0);
+                pitchRight.setPosition(0);
+            } else {
+                pitchLeft.setPosition(angle);
+                pitchRight.setPosition(angle);
             }
-            if (pitch < 0) {
-                pitch = 0;
-            }
-
-            pitchLeft.setPosition(pitch);
-            pitchRight.setPosition(pitch);
         }
     }
 
@@ -239,17 +242,35 @@ public class ClawControl {
         }
     }
 
+    //calculates the servo ratio for delivery adjustment
+    private double calcServoRatio(double angle) {
+        double backdropAngle = 30.0;
+        double pitchTolerance = 0.0;
+        return 0.75 * (180 + backdropAngle - angle + pitchTolerance) / (180 + backdropAngle - ArmControl.DELIVER_ROTATION);
+    }
+
     //deliver pitch for autonomous
     public void autoDeliver() {
         if(status) {
+            pitchState = PitchState.AUTONOMOUS;
             pitch = AUTO_DELIVER_PITCH;
             pitchLeft.setPosition(pitch);
             pitchRight.setPosition(pitch);
         }
     }
 
+    //updates the claw with arm motor rotation
+    public void update(double angle) {
+        if(status) {
+            if(pitchState == PitchState.DELIVER) {
+                pitch = calcServoRatio(angle);
+                rotateTo(pitch);
+            }
+        }
+    }
+
     //enum claw states
-    public enum ClawState {
+    private enum ClawState {
         BOTH_CLOSE,
         BOTH_OPEN,
         LEFT_OPEN_ONLY,
@@ -257,8 +278,9 @@ public class ClawControl {
     }
 
     //enum pitch states
-    public enum PitchState {
+    private enum PitchState {
         MANUAL,
-        DELIVER
+        DELIVER,
+        AUTONOMOUS
     }
 }

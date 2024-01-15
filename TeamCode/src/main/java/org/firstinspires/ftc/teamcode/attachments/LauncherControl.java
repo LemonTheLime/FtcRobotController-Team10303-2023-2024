@@ -21,6 +21,8 @@ public class LauncherControl {
     //motor fields
     private Servo launcher;
     private boolean open = false;
+    //state
+    private LauncherState launcherState = LauncherState.LOADED;
 
     //constructor
     public LauncherControl(HardwareMap hwMap, Telemetry t) {
@@ -47,23 +49,33 @@ public class LauncherControl {
     public void telemetryOutput() {
         t.addLine("LauncherControl: ");
         t.addData("status", status);
+        t.addData("launcherState", launcherState);
         t.addData("position", open);
         t.addLine();
     }
 
-    //run the servo
+    //open the servo
     public void open() {
         if(status) {
+            launcherState = LauncherState.RELEASED;
             open = true;
             launcher.setPosition(0.2);
         }
     }
 
-    //stop the servo
+    //close the servo
     public void close() {
         if(status) {
+            launcherState = LauncherState.LOADED;
             open = false;
             launcher.setPosition(1);
         }
     }
+
+    //enum launcher states
+    private enum LauncherState {
+        LOADED,
+        RELEASED
+    }
+
 }
