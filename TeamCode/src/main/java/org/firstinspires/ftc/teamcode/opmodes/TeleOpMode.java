@@ -69,6 +69,7 @@ public class TeleOpMode extends OpMode {
         Arm.init();
         Claw.init();
         Launcher.init();
+        Claw.reset();
     }
 
     //Teleop directly controls the drivetrain because autonomous is separate

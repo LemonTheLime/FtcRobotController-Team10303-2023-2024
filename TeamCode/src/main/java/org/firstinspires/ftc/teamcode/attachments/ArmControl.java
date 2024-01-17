@@ -34,7 +34,7 @@ public class ArmControl {
     //preset angles
     private static final double MAX_ROTATION = 180.0; //arm starts off here
     private static final double MIN_ROTATION = -38.0;
-    public static final double DELIVER_ROTATION = 40; //teleop
+    public static final double DELIVER_ROTATION = 20; //teleop
     private static final double AUTO_DELIVER_ROTATION = 0; //autonomous
     //state
     private ArmState armState = ArmState.INITIAL;

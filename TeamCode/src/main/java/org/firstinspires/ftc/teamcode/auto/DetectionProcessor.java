@@ -118,7 +118,7 @@ public class DetectionProcessor implements VisionProcessor {
     }
 
     //scans a certain region of blocks
-    public boolean scanRegion(int x, int y, int width, int height, double threshold_percent) {
+    private boolean scanRegion(int x, int y, int width, int height, double threshold_percent) {
         int sum = 0;
         for(int i = y; i < y + height; i++) {
             for(int j = x; j < x + width; j++) {

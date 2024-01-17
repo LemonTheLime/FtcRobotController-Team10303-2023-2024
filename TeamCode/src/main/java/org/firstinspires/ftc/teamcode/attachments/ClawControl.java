@@ -30,8 +30,9 @@ public class ClawControl {
     private static final double RIGHT_MAX = 0.5;
     //pitch constants
     private double pitch = 0; //position of pitch servo
+    private static final double BACKDROP_ANGLE = 30.0;
     private static final double GROUND_PITCH = 0.713;
-    private static final double DELIVER_PITCH = 0.75;
+    private static final double DELIVER_PITCH = 0.838; //0.75 * (180 + BACKDROP_ANGLE - ArmControl.DELIVER_ROTATION)/(180 + BACKDROP_ANGLE - 40.0); //0.838
     private static final double AUTO_DELIVER_PITCH = 0.82;
     //armmotor rotation for deliver auto
     private double armRotation;
@@ -217,18 +218,18 @@ public class ClawControl {
     //ground pitch
     public void ground() {
         if(status) {
+            pitchState = PitchState.PRESET;
             pitch = GROUND_PITCH;
-            pitchLeft.setPosition(pitch);
-            pitchRight.setPosition(pitch);
+            rotateTo(pitch);
         }
     }
 
     //reset pitch
     public void reset() {
         if(status) {
+            pitchState = PitchState.PRESET;
             pitch = 0;
-            pitchLeft.setPosition(pitch);
-            pitchRight.setPosition(pitch);
+            rotateTo(pitch);
         }
     }
 
@@ -237,16 +238,14 @@ public class ClawControl {
         if(status) {
             pitchState = PitchState.DELIVER;
             pitch = DELIVER_PITCH;
-            pitchLeft.setPosition(pitch);
-            pitchRight.setPosition(pitch);
+            rotateTo(pitch);
         }
     }
 
     //calculates the servo ratio for delivery adjustment
     private double calcServoRatio(double angle) {
-        double backdropAngle = 30.0;
         double pitchTolerance = 0.0;
-        return 0.75 * (180 + backdropAngle - angle + pitchTolerance) / (180 + backdropAngle - ArmControl.DELIVER_ROTATION);
+        return DELIVER_PITCH * (180 + BACKDROP_ANGLE - angle + pitchTolerance) / (180 + BACKDROP_ANGLE - ArmControl.DELIVER_ROTATION);
     }
 
     //deliver pitch for autonomous
@@ -254,8 +253,7 @@ public class ClawControl {
         if(status) {
             pitchState = PitchState.AUTONOMOUS;
             pitch = AUTO_DELIVER_PITCH;
-            pitchLeft.setPosition(pitch);
-            pitchRight.setPosition(pitch);
+            rotateTo(pitch);
         }
     }
 
@@ -280,6 +278,7 @@ public class ClawControl {
     //enum pitch states
     private enum PitchState {
         MANUAL,
+        PRESET,
         DELIVER,
         AUTONOMOUS
     }
