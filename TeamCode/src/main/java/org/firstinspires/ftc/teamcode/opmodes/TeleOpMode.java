@@ -17,8 +17,8 @@ public class TeleOpMode extends OpMode {
     private DcMotor rightFront = null;
     private DcMotor rightRear = null;
     double leftFrontPower, rightFrontPower, leftRearPower, rightRearPower;
-    double speedRatio = 0.75; // 3/4
-    double rotationRatio = 0.67; // 2/3
+    double speedRatio = 1.0; // 1
+    double rotationRatio = 2.0 / 3; // 2/3
     //arm
     private ArmControl Arm = null;
     private double armRotation;
@@ -149,33 +149,21 @@ public class TeleOpMode extends OpMode {
         runLauncher = gamepad1.b && gamepad2.b;
 
         //SINGLE PRESS BUTTONS
-        //decrease drivetrain speed and rotation ratios
+        //half power for drivetrain
         if(gamepad1.left_bumper) {
             if(lastKeyPressed1.equals("none")) {
                 lastKeyPressed1 = "left_bumper";
-                speedRatio -= 0.15;
-                rotationRatio -= 0.15;
-                if(speedRatio <= 0) {
-                    speedRatio += 0.15;
-                }
-                if(rotationRatio <= 0) {
-                    rotationRatio += 0.15;
-                }
+                speedRatio = 0.5;
+                rotationRatio = 1.0 / 3;
             }
         }
 
-        //increase drivetrain speed and rotation ratios
+        //full power for drivetrain
         if(gamepad1.right_bumper) {
             if(lastKeyPressed1.equals("none")) {
                 lastKeyPressed1 = "right_bumper";
-                speedRatio += 0.15;
-                rotationRatio += 0.15;
-                if(speedRatio > 1.5) {
-                    speedRatio -= 0.15;
-                }
-                if(rotationRatio > 1.3) {
-                    rotationRatio -= 0.15;
-                }
+                speedRatio = 1.0;
+                rotationRatio = 2.0 / 3;
             }
         }
 

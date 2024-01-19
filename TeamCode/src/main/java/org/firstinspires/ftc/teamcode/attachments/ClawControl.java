@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.attachments;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -7,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 /* ClawControl
  * runs the servos of the claw attachment
  */
+@Config
 public class ClawControl {
 
     //FIELDS
@@ -24,21 +26,26 @@ public class ClawControl {
     //claw constants
     private boolean leftOpen = false;
     private boolean rightOpen = false;
-    private static final double LEFT_MIN = 0.0;
-    private static final double LEFT_MAX = 0.5;
-    private static final double RIGHT_MIN = 0.0;
-    private static final double RIGHT_MAX = 0.5;
+    private static final double LEFT_OPEN = 0.35;
+    private static final double LEFT_CLOSE = 0.6;
+    private static final double RIGHT_OPEN = 0.31;
+    private static final double RIGHT_CLOSE = 0.56;
     //pitch constants
     private double pitch = 0; //position of pitch servo
     private static final double BACKDROP_ANGLE = 30.0;
     private static final double GROUND_PITCH = 0.713;
-    private static final double DELIVER_PITCH = 0.838; //0.75 * (180 + BACKDROP_ANGLE - ArmControl.DELIVER_ROTATION)/(180 + BACKDROP_ANGLE - 40.0); //0.838
+    private static final double DELIVER_PITCH = 0.794; //0.75 * (180 + BACKDROP_ANGLE - ArmControl.DELIVER_ROTATION)/(180 + BACKDROP_ANGLE - 40.0); //0.838
     private static final double AUTO_DELIVER_PITCH = 0.82;
-    //armmotor rotation for deliver auto
-    private double armRotation;
     //states
     private ClawState clawState = ClawState.BOTH_CLOSE;
     private PitchState pitchState = PitchState.MANUAL;
+
+    //config
+    public static boolean testMode = false;
+    public static double LEFT_OPEN_TEST = 0.35;
+    public static double LEFT_CLOSE_TEST = 0.6;
+    public static double RIGHT_OPEN_TEST = 0.31;
+    public static double RIGHT_CLOSE_TEST = 0.56;
 
     //constructor
     public ClawControl(HardwareMap hwMap, Telemetry t) {
@@ -81,7 +88,11 @@ public class ClawControl {
     //open left claw
     public void openLeftClaw() {
         if(status) {
-            leftClaw.setPosition(LEFT_MIN);
+            double angle = LEFT_OPEN;
+            if(testMode) {
+                angle = LEFT_OPEN_TEST;
+            }
+            leftClaw.setPosition(angle);
             leftOpen = true;
             updateClawState();
         }
@@ -90,7 +101,11 @@ public class ClawControl {
     //close left claw
     public void closeLeftClaw() {
         if(status) {
-            leftClaw.setPosition(LEFT_MAX);
+            double angle = LEFT_CLOSE;
+            if(testMode) {
+                angle = LEFT_CLOSE_TEST;
+            }
+            leftClaw.setPosition(angle);
             leftOpen = false;
             updateClawState();
         }
@@ -111,7 +126,11 @@ public class ClawControl {
     //open right claw
     public void openRightClaw() {
         if(status) {
-            rightClaw.setPosition(RIGHT_MIN);
+            double angle = RIGHT_OPEN;
+            if(testMode) {
+                angle = RIGHT_OPEN_TEST;
+            }
+            rightClaw.setPosition(angle);
             rightOpen = true;
             updateClawState();
         }
@@ -120,7 +139,11 @@ public class ClawControl {
     //close right claw
     public void closeRightClaw() {
         if(status) {
-            rightClaw.setPosition(RIGHT_MAX);
+            double angle = RIGHT_CLOSE;
+            if(testMode) {
+                angle = RIGHT_CLOSE_TEST;
+            }
+            rightClaw.setPosition(angle);
             rightOpen = false;
             updateClawState();
         }
@@ -245,7 +268,11 @@ public class ClawControl {
     //calculates the servo ratio for delivery adjustment
     private double calcServoRatio(double angle) {
         double pitchTolerance = 0.0;
-        return DELIVER_PITCH * (180 + BACKDROP_ANGLE - angle + pitchTolerance) / (180 + BACKDROP_ANGLE - ArmControl.DELIVER_ROTATION);
+        if(angle < 40) {
+            return DELIVER_PITCH * (180 + BACKDROP_ANGLE - angle + pitchTolerance) / (180 + BACKDROP_ANGLE - ArmControl.DELIVER_ROTATION);
+        } else {
+            return DELIVER_PITCH;
+        }
     }
 
     //deliver pitch for autonomous

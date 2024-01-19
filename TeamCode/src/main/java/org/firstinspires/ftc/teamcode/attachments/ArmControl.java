@@ -34,7 +34,7 @@ public class ArmControl {
     //preset angles
     private static final double MAX_ROTATION = 180.0; //arm starts off here
     private static final double MIN_ROTATION = -38.0;
-    public static final double DELIVER_ROTATION = 20; //teleop
+    public static final double DELIVER_ROTATION = 30; //teleop
     private static final double AUTO_DELIVER_ROTATION = 0; //autonomous
     //state
     private ArmState armState = ArmState.INITIAL;
@@ -122,11 +122,13 @@ public class ArmControl {
                         power = 0.0;
                         break;
                     case MOVING_TO_DELIVER:
+                        power = 0.41;
+                        break;
                     case DELIVER:
                     case MOVING_TO_CUSTOM:
                     case CUSTOM:
                     case AUTO:
-                        power = 0.25;
+                        power = 0.31;
                         break;
                 }
 
@@ -190,7 +192,7 @@ public class ArmControl {
         if(status) {
             if(armState != ArmState.INITIAL && armState != ArmState.MOVING_TO_INITIAL1
                     && armState != ArmState.MOVING_TO_INITIAL2) {
-                if(rotation < 0) {
+                if(rotation < 90) {
                     armState = ArmState.MOVING_TO_INITIAL1;
                 } else {
                     armState = ArmState.MOVING_TO_INITIAL2;
@@ -202,7 +204,7 @@ public class ArmControl {
     //TELEOP: preset arm rotation for delivering pixel to backdrop
     public void deliver() {
         if(status) {
-            if(armState == ArmState.INITIAL) {
+            if(armState == ArmState.INITIAL || armState == ArmState.GROUND) {
                 resetEncoder();
             }
             if(armState != ArmState.DELIVER && armState != ArmState.MOVING_TO_DELIVER) {
@@ -304,7 +306,7 @@ public class ArmControl {
                 goToTargetRotation(targetRotation);
                 break;
             case MOVING_TO_DELIVER:
-                if(rotation > (DELIVER_ROTATION - tolerance)) {
+                if(Math.abs(DELIVER_ROTATION - rotation) < tolerance) {     //rotation > (DELIVER_ROTATION - tolerance)) {
                     armState = ArmState.DELIVER;
                 } else {
                     targetRotation = DELIVER_ROTATION;
