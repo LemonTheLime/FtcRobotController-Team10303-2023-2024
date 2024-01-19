@@ -247,7 +247,7 @@ public class ClawControl {
         }
     }
 
-    //reset pitch
+    //reset pitch for initial
     public void reset() {
         if(status) {
             pitchState = PitchState.PRESET;
