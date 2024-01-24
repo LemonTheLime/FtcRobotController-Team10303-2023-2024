@@ -111,6 +111,7 @@ public class GridBlock {
         return colorIsDetected;
     }
 
+    //sets whether the block is regionalized (blue edge) or not
     public void setRegionalized(boolean mode) {
         if(mode) {
             regionalized = true;

@@ -56,6 +56,7 @@ public class DetectionProcessor implements VisionProcessor {
     }
 
 
+    //creates grid blocks for camera
     public void init(int width, int height, CameraCalibration calibration) {
         blockList = new ArrayList<GridBlock>();
         blockWidth = (int)Math.floor(width / col);
@@ -67,6 +68,7 @@ public class DetectionProcessor implements VisionProcessor {
         }
     }
 
+    //processes a singular camera frame
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
         //convert frame to HSV
@@ -77,7 +79,7 @@ public class DetectionProcessor implements VisionProcessor {
             gb.processBlock(frame);
         }
 
-        //threshold camera stream for viewer
+        //threshold camera stream for viewer (is not actually used for processing element)
         if(detectionColor == DetectionColor.BLUE) {
             Core.inRange(frame, blueLowHSV, blueHighHSV, frame);
         } else if(detectionColor == DetectionColor.RED) {
@@ -92,6 +94,7 @@ public class DetectionProcessor implements VisionProcessor {
         return null;
     }
 
+    //draws frame on camera stream
     @Override
     public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
         Paint rectPaint = new Paint();
