@@ -91,15 +91,15 @@ public class RedRight extends LinearOpMode {
                 .lineToSplineHeading(new Pose2d(-16.5, 0, Math.toRadians(45)))
                 .build();
         lTraj1prime = drive.trajectoryBuilder(lTraj1.end())
-                .back(11.1)
+                .back(10.5)
                 .build();
         lTraj2 = drive.trajectoryBuilder(lTraj1prime.end())
                 .lineToSplineHeading(new Pose2d(-15, 0, Math.toRadians(0)))
                 .build();
         //deliver yellow pixel to backdrop
         lTraj3 = drive.trajectoryBuilder(lTraj2.end(), true)
-                .splineTo(new Vector2d(-29, 28), Math.toRadians(90))
-                .addTemporalMarker(1, () -> {
+                .splineTo(new Vector2d(-30, 29), Math.toRadians(90))
+                .addTemporalMarker(1.5, () -> {
                     Arm.autoDeliver();
                     Claw.autoDeliver();
                 })
@@ -150,7 +150,7 @@ public class RedRight extends LinearOpMode {
         //deliver yellow pixel to backdrop
         mTraj3 = drive.trajectoryBuilder(mTraj2.end(), true)
                 .splineTo(new Vector2d(-23.75, 29), Math.toRadians(90))
-                .addTemporalMarker(1, () -> {
+                .addTemporalMarker(1.5, () -> {
                     Arm.autoDeliver();
                     Claw.autoDeliver();
                 })
@@ -200,7 +200,7 @@ public class RedRight extends LinearOpMode {
         //deliver yellow pixel to backdrop
         rTraj3 = drive.trajectoryBuilder(rTraj2.end(), true)
                 .splineTo(new Vector2d(-18, 29), Math.toRadians(90))
-                .addTemporalMarker(1, () -> {
+                .addTemporalMarker(1.5, () -> {
                     Arm.autoDeliver();
                     Claw.autoDeliver();
                 })
