@@ -33,7 +33,7 @@ public class ClawControl {
     //pitch constants
     private double pitch = 0; //position of pitch servo
     private static final double BACKDROP_ANGLE = 30.0;
-    private static final double GROUND_PITCH = 0.713;
+    private static final double GROUND_PITCH = 0.75;
     private static final double DELIVER_PITCH = 0.794; //0.75 * (180 + BACKDROP_ANGLE - ArmControl.DELIVER_ROTATION)/(180 + BACKDROP_ANGLE - 40.0); //0.838
     private static final double AUTO_DELIVER_PITCH = 0.82;
     //states
@@ -46,6 +46,8 @@ public class ClawControl {
     public static double LEFT_CLOSE_TEST = 0.6;
     public static double RIGHT_OPEN_TEST = 0.31;
     public static double RIGHT_CLOSE_TEST = 0.56;
+    public static double GROUND_PITCH_TEST = 0.75;
+    public static double DELIVER_PITCH_TEST = 0.79;
 
     //constructor
     public ClawControl(HardwareMap hwMap, Telemetry t) {
@@ -241,8 +243,11 @@ public class ClawControl {
     //ground pitch
     public void ground() {
         if(status) {
-            pitchState = PitchState.PRESET;
+            pitchState = PitchState.RESET;
             pitch = GROUND_PITCH;
+            if(testMode) {
+                pitch = GROUND_PITCH_TEST;
+            }
             rotateTo(pitch);
         }
     }
@@ -250,7 +255,7 @@ public class ClawControl {
     //reset pitch for initial
     public void reset() {
         if(status) {
-            pitchState = PitchState.PRESET;
+            pitchState = PitchState.RESET;
             pitch = 0;
             rotateTo(pitch);
         }
@@ -261,6 +266,9 @@ public class ClawControl {
         if(status) {
             pitchState = PitchState.DELIVER;
             pitch = DELIVER_PITCH;
+            if(testMode) {
+                pitch = DELIVER_PITCH_TEST;
+            }
             rotateTo(pitch);
         }
     }
@@ -268,10 +276,14 @@ public class ClawControl {
     //calculates the servo ratio for delivery adjustment
     private double calcServoRatio(double angle) {
         double pitchTolerance = 0.0;
+        double deliverPitch = DELIVER_PITCH;
+        if(testMode) {
+            deliverPitch = DELIVER_PITCH_TEST;
+        }
         if(angle < 40) {
-            return DELIVER_PITCH * (180 + BACKDROP_ANGLE - angle + pitchTolerance) / (180 + BACKDROP_ANGLE - ArmControl.DELIVER_ROTATION);
+            return deliverPitch * (180 + BACKDROP_ANGLE - angle + pitchTolerance) / (180 + BACKDROP_ANGLE - ArmControl.DELIVER_ROTATION);
         } else {
-            return DELIVER_PITCH;
+            return deliverPitch;
         }
     }
 
@@ -305,7 +317,7 @@ public class ClawControl {
     //enum pitch states
     private enum PitchState {
         MANUAL,
-        PRESET,
+        RESET,
         DELIVER,
         AUTONOMOUS
     }
