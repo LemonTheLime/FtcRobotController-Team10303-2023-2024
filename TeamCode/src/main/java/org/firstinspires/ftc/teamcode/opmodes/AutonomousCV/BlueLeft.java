@@ -93,8 +93,8 @@ public class BlueLeft extends LinearOpMode {
                 .build();
         //deliver yellow pixel to backdrop
         lTraj3 = drive.trajectoryBuilder(lTraj2.end(), true)
-                .splineTo(new Vector2d(-17.5, -29), Math.toRadians(-90))
-                .addTemporalMarker(1, () -> {
+                .splineTo(new Vector2d(-17.5, -30), Math.toRadians(-90))
+                .addTemporalMarker(1.25, () -> {
                     Arm.autoDeliver();
                     Claw.autoDeliver();
                 })
@@ -143,8 +143,8 @@ public class BlueLeft extends LinearOpMode {
                 .build();
         //deliver yellow pixel to backdrop
         mTraj3 = drive.trajectoryBuilder(mTraj2.end(), true)
-                .splineTo(new Vector2d(-24, -29), Math.toRadians(-90))
-                .addTemporalMarker(1, () -> {
+                .splineTo(new Vector2d(-24, -30), Math.toRadians(-90))
+                .addTemporalMarker(1.25, () -> {
                     Arm.autoDeliver();
                     Claw.autoDeliver();
                 })
@@ -196,8 +196,8 @@ public class BlueLeft extends LinearOpMode {
                 .build();
         //deliver yellow pixel to backdrop
         rTraj3 = drive.trajectoryBuilder(rTraj2.end(), true)
-                .splineTo(new Vector2d(-30, -29), Math.toRadians(-89))
-                .addTemporalMarker(1, () -> {
+                .splineTo(new Vector2d(-30.75, -30), Math.toRadians(-90))
+                .addTemporalMarker(1.25, () -> {
                     Arm.autoDeliver();
                     Claw.autoDeliver();
                 })

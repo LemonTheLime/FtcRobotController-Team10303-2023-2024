@@ -36,6 +36,7 @@ public class ArmControl {
     private static final double MIN_ROTATION = -38.0;
     public static final double DELIVER_ROTATION = 30; //teleop
     private static final double AUTO_DELIVER_ROTATION = 0; //autonomous
+    private static final double AUTO_DELIVER_ROTATION2 = 25;
     //state
     private ArmState armState = ArmState.INITIAL;
 
@@ -347,6 +348,15 @@ public class ArmControl {
         if(status) {
             armState = ArmState.AUTO;
             targetRotation = AUTO_DELIVER_ROTATION;
+            goToTargetRotation(targetRotation);
+        }
+    }
+
+    //AUTONOMOUS: preset arm rotation for delivering pixel to backdrop far away
+    public void autoDeliver2() {
+        if(status) {
+            armState = ArmState.AUTO;
+            targetRotation = AUTO_DELIVER_ROTATION2;
             goToTargetRotation(targetRotation);
         }
     }

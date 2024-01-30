@@ -34,8 +34,9 @@ public class ClawControl {
     private double pitch = 0; //position of pitch servo
     private static final double BACKDROP_ANGLE = 30.0;
     private static final double GROUND_PITCH = 0.75;
-    private static final double DELIVER_PITCH = 0.794; //0.75 * (180 + BACKDROP_ANGLE - ArmControl.DELIVER_ROTATION)/(180 + BACKDROP_ANGLE - 40.0); //0.838
+    private static final double DELIVER_PITCH = 0.82; //0.75 * (180 + BACKDROP_ANGLE - ArmControl.DELIVER_ROTATION)/(180 + BACKDROP_ANGLE - 40.0); //0.838
     private static final double AUTO_DELIVER_PITCH = 0.82;
+    private static final double AUTO_DELIVER_PITCH2 = 0.85;
     //states
     private ClawState clawState = ClawState.BOTH_CLOSE;
     private PitchState pitchState = PitchState.MANUAL;
@@ -47,7 +48,7 @@ public class ClawControl {
     public static double RIGHT_OPEN_TEST = 0.31;
     public static double RIGHT_CLOSE_TEST = 0.56;
     public static double GROUND_PITCH_TEST = 0.75;
-    public static double DELIVER_PITCH_TEST = 0.79;
+    public static double DELIVER_PITCH_TEST = 0.82;
 
     //constructor
     public ClawControl(HardwareMap hwMap, Telemetry t) {
@@ -292,6 +293,15 @@ public class ClawControl {
         if(status) {
             pitchState = PitchState.AUTONOMOUS;
             pitch = AUTO_DELIVER_PITCH;
+            rotateTo(pitch);
+        }
+    }
+
+    //deliver pitch for autonomous far from backdro
+    public void autoDeliver2() {
+        if(status) {
+            pitchState = PitchState.AUTONOMOUS;
+            pitch = AUTO_DELIVER_PITCH2;
             rotateTo(pitch);
         }
     }
