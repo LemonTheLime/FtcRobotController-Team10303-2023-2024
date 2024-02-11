@@ -98,7 +98,7 @@ public class RedRight extends LinearOpMode {
                 .build();
         //deliver yellow pixel to backdrop
         lTraj3 = drive.trajectoryBuilder(lTraj2.end(), true)
-                .splineTo(new Vector2d(-30, 29), Math.toRadians(90))
+                .splineTo(new Vector2d(-29, 29), Math.toRadians(90))
                 .addTemporalMarker(1.25, () -> {
                     Arm.autoDeliver();
                     Claw.autoDeliver();
@@ -145,11 +145,11 @@ public class RedRight extends LinearOpMode {
                 .back(27.5)
                 .build();
         mTraj2 = drive.trajectoryBuilder(mTraj1.end())
-                .forward(10)
+                .forward(14)
                 .build();
         //deliver yellow pixel to backdrop
         mTraj3 = drive.trajectoryBuilder(mTraj2.end(), true)
-                .splineTo(new Vector2d(-23.75, 29), Math.toRadians(90))
+                .splineTo(new Vector2d(-22, 31), Math.toRadians(90))
                 .addTemporalMarker(1.25, () -> {
                     Arm.autoDeliver();
                     Claw.autoDeliver();

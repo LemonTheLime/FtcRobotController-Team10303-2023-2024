@@ -101,10 +101,6 @@ public class RedLeft extends LinearOpMode {
         //yellow pixel
         lTraj5 = drive.trajectoryBuilder(lTraj4.end())
                 .lineTo(new Vector2d(-3, 60))
-                .addTemporalMarker(2, () -> {
-                    Arm.autoDeliver2();
-                    Claw.autoDeliver2();
-                })
                 .build();
         lTraj6 = drive.trajectoryBuilder(lTraj5.end())
                 .lineToConstantHeading(new Vector2d(-28, 84.5))
@@ -122,12 +118,14 @@ public class RedLeft extends LinearOpMode {
 
         //deliver yellow pixel
         drive.followTrajectory(lTraj5);
+        sleep(500);
+        drive.followTrajectory(lTraj6);
+        //deliver arm
+        Arm.autoDeliver2();
+        Claw.autoDeliver2();
         waitForArm();
         sleep(1000);
-        drive.followTrajectory(lTraj6);
-        //wait for arm to deliver and open claw
-        waitForArm();
-        Claw.openRightClaw();
+        Claw.openLeftClaw();
         sleep(1000);
         //retract
         Arm.autoArmUp();
@@ -155,13 +153,9 @@ public class RedLeft extends LinearOpMode {
                 .build();
         mTraj5 = drive.trajectoryBuilder(mTraj4.end())
                 .lineTo(new Vector2d(-3, 60))
-                .addTemporalMarker(2, () -> {
-                    Arm.autoDeliver2();
-                    Claw.autoDeliver2();
-                })
                 .build();
         mTraj6 = drive.trajectoryBuilder(mTraj5.end())
-                .lineToConstantHeading(new Vector2d(-24, 84.5))
+                .lineToConstantHeading(new Vector2d(-22, 84.5))
                 .build();
     }
 
@@ -176,12 +170,14 @@ public class RedLeft extends LinearOpMode {
 
         //deliver yellow pixel
         drive.followTrajectory(mTraj5);
+        sleep(500);
+        drive.followTrajectory(mTraj6);
+        //deliver arm
+        Arm.autoDeliver2();
+        Claw.autoDeliver2();
         waitForArm();
         sleep(1000);
-        drive.followTrajectory(mTraj6);
-        //wait for arm to deliver and open claw
-        waitForArm();
-        Claw.openRightClaw();
+        Claw.openLeftClaw();
         sleep(1000);
         //retract
         Arm.autoArmUp();
@@ -212,13 +208,9 @@ public class RedLeft extends LinearOpMode {
                 .build();
         rTraj5 = drive.trajectoryBuilder(rTraj4.end())
                 .lineTo(new Vector2d(-3, 60))
-                .addTemporalMarker(2, () -> {
-                    Arm.autoDeliver2();
-                    Claw.autoDeliver2();
-                })
                 .build();
         rTraj6 = drive.trajectoryBuilder(rTraj5.end())
-                .lineToLinearHeading(new Pose2d(-13, 84.5, Math.toRadians(-96)))
+                .lineToLinearHeading(new Pose2d(-13, 84.5, Math.toRadians(-90)))
                 .build();
     }
 
@@ -232,14 +224,16 @@ public class RedLeft extends LinearOpMode {
         drive.followTrajectory(rTraj4);
         sleep(1000);
 
-        //deliver yellow pixel
+        //drive to yellow pixel
         drive.followTrajectory(rTraj5);
+        sleep(500);
+        drive.followTrajectory(rTraj6);
+        //deliver arm
+        Arm.autoDeliver2();
+        Claw.autoDeliver2();
         waitForArm();
         sleep(1000);
-        drive.followTrajectory(rTraj6);
-        //wait for arm to deliver and open claw
-        waitForArm();
-        Claw.openRightClaw();
+        Claw.openLeftClaw();
         sleep(1000);
         //retract
         Arm.autoArmUp();

@@ -36,7 +36,7 @@ public class ArmControl {
     private static final double MIN_ROTATION = -38.0;
     public static final double DELIVER_ROTATION = 30; //teleop
     private static final double AUTO_DELIVER_ROTATION = 0; //autonomous
-    private static final double AUTO_DELIVER_ROTATION2 = 25;
+    private static final double AUTO_DELIVER_ROTATION2 = 20;
     //state
     private ArmState armState = ArmState.INITIAL;
 
@@ -128,8 +128,10 @@ public class ArmControl {
                     case DELIVER:
                     case MOVING_TO_CUSTOM:
                     case CUSTOM:
-                    case AUTO:
                         power = 0.31;
+                        break;
+                    case AUTO:
+                        power = 0.25;
                         break;
                 }
 
@@ -364,7 +366,7 @@ public class ArmControl {
     //AUTONOMOUS: checks if the arm motor is busy
     public boolean autoIsBusy() {
         if(status) {
-            double tolerance = 3; //degree tolerance
+            double tolerance = 2.5; //degree tolerance
             getEncoderValues();
             return Math.abs(rotation - targetRotation) > tolerance;
         }
