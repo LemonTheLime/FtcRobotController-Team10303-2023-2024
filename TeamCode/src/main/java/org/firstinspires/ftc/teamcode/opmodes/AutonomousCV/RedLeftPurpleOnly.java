@@ -15,7 +15,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 /* RedLeftPurpleOnly
  * Delivers purple pixel only
  */
-@Autonomous(name = "RedLeftPurpleOnly")
+@Autonomous(name = "RedLeftPurpleOnly", group = "Purple Only")
 public class RedLeftPurpleOnly extends LinearOpMode {
 
     /* * * * Attachments * * * */

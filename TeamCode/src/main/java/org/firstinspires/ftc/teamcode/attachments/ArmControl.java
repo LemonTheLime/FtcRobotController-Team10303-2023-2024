@@ -128,10 +128,8 @@ public class ArmControl {
                     case DELIVER:
                     case MOVING_TO_CUSTOM:
                     case CUSTOM:
-                        power = 0.31;
-                        break;
                     case AUTO:
-                        power = 0.25;
+                        power = 0.31;
                         break;
                 }
 

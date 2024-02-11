@@ -30,9 +30,9 @@ public class RedLeft extends LinearOpMode {
     /* * * * Roadrunner * * * */
     private int spikeMark = 0; //1: left, 2: middle, 3: right
     private SampleMecanumDrive drive;
-    private Trajectory lTraj1, lTraj2, lTraj3, lTraj4, lTraj5, lTraj6 = null;
-    private Trajectory mTraj1, mTraj2, mTraj3, mTraj4, mTraj5, mTraj6 = null;
-    private Trajectory rTraj1, rTraj1prime, rTraj2, rTraj3, rTraj4, rTraj5, rTraj6 = null;
+    private Trajectory lTraj1, lTraj2, lTraj3, lTraj4, lTraj5, lTraj6, lTraj7 = null;
+    private Trajectory mTraj1, mTraj2, mTraj3, mTraj4, mTraj5, mTraj6, mTraj7 = null;
+    private Trajectory rTraj1, rTraj1prime, rTraj2, rTraj3, rTraj4, rTraj5, rTraj6, rTraj7 = null;
 
     public void runOpMode() throws InterruptedException {
 
@@ -91,6 +91,8 @@ public class RedLeft extends LinearOpMode {
         lTraj2 = drive.trajectoryBuilder(lTraj1.end())
                 .lineToSplineHeading(new Pose2d(-15, 0, Math.toRadians(0)))
                 .build();
+
+        //drive underneath truss
         lTraj3 = drive.trajectoryBuilder(lTraj2.end())
                 .lineToLinearHeading(new Pose2d(-3, 0, Math.toRadians(-90)))
                 .build();
@@ -98,35 +100,51 @@ public class RedLeft extends LinearOpMode {
                 .lineTo(new Vector2d(-3, 25))
                 .build();
 
-        //yellow pixel
+        //drive close to backdrop
         lTraj5 = drive.trajectoryBuilder(lTraj4.end())
                 .lineTo(new Vector2d(-3, 60))
                 .build();
         lTraj6 = drive.trajectoryBuilder(lTraj5.end())
-                .lineToConstantHeading(new Vector2d(-28, 84.5))
+                .lineToConstantHeading(new Vector2d(-28, 82.5))
+                .build();
+
+        //move up to backdrop before delivering yellow pixel
+        lTraj7 = drive.trajectoryBuilder(lTraj6.end())
+                .back(2)
                 .build();
     }
 
     //follow left pixel trajectories
     private void followLeftPixelTraj() {
-        //deliver purple pixel and wait inside truss
+        //deliver purple pixel
         drive.followTrajectory(lTraj1);
         drive.followTrajectory(lTraj2);
+
+        //drive underneath truss
         drive.followTrajectory(lTraj3);
         drive.followTrajectory(lTraj4);
+
+        //delay
         sleep(1000);
 
-        //deliver yellow pixel
+        //drive close to backdrop
         drive.followTrajectory(lTraj5);
         sleep(500);
         drive.followTrajectory(lTraj6);
-        //deliver arm
+
+        //extend arm
         Arm.autoDeliver2();
         Claw.autoDeliver2();
         waitForArm();
         sleep(1000);
+
+        //move up to backdrop before delivering yellow pixel
+        drive.followTrajectory(lTraj7);
+
+        //deliver yellow pixel
         Claw.openLeftClaw();
         sleep(1000);
+
         //retract
         Arm.autoArmUp();
         waitForArm();
@@ -145,18 +163,28 @@ public class RedLeft extends LinearOpMode {
         mTraj2 = drive.trajectoryBuilder(mTraj1.end())
                 .forward(10)
                 .build();
+
+        //drive underneath truss
         mTraj3 = drive.trajectoryBuilder(mTraj2.end())
                 .lineToLinearHeading(new Pose2d(-3, 0, Math.toRadians(-90)))
                 .build();
         mTraj4 = drive.trajectoryBuilder(mTraj3.end())
                 .lineTo(new Vector2d(-3, 25))
                 .build();
+
+        //drive close to backdrop
         mTraj5 = drive.trajectoryBuilder(mTraj4.end())
                 .lineTo(new Vector2d(-3, 60))
                 .build();
         mTraj6 = drive.trajectoryBuilder(mTraj5.end())
-                .lineToConstantHeading(new Vector2d(-22, 84.5))
+                .lineToConstantHeading(new Vector2d(-22, 82.5))
                 .build();
+
+        //move up to backdrop before delivering yellow pixel
+        mTraj7 = drive.trajectoryBuilder(mTraj6.end())
+                .back(2)
+                .build();
+
     }
 
     //follow middle pixel trajectories
@@ -164,21 +192,32 @@ public class RedLeft extends LinearOpMode {
         //deliver purple pixel
         drive.followTrajectory(mTraj1);
         drive.followTrajectory(mTraj2);
+
+        //drive underneath truss
         drive.followTrajectory(mTraj3);
         drive.followTrajectory(mTraj4);
+
+        //delay
         sleep(1000);
 
-        //deliver yellow pixel
+        //drive close to backdrop
         drive.followTrajectory(mTraj5);
         sleep(500);
         drive.followTrajectory(mTraj6);
-        //deliver arm
+
+        //extend arm
         Arm.autoDeliver2();
         Claw.autoDeliver2();
         waitForArm();
         sleep(1000);
+
+        //move up to backdrop before delivering yellow pixel
+        drive.followTrajectory(mTraj7);
+
+        //deliver yellow pixel
         Claw.openLeftClaw();
         sleep(1000);
+
         //retract
         Arm.autoArmUp();
         waitForArm();
@@ -200,41 +239,61 @@ public class RedLeft extends LinearOpMode {
         rTraj2 = drive.trajectoryBuilder(rTraj1prime.end())
                 .lineToSplineHeading(new Pose2d(-15, 0, Math.toRadians(0)))
                 .build();
+
+        //drive underneath truss
         rTraj3 = drive.trajectoryBuilder(rTraj2.end())
                 .lineToLinearHeading(new Pose2d(-3, 0, Math.toRadians(-90)))
                 .build();
         rTraj4 = drive.trajectoryBuilder(rTraj3.end())
                 .lineTo(new Vector2d(-3, 25))
                 .build();
+
+        //drive close to backdrop
         rTraj5 = drive.trajectoryBuilder(rTraj4.end())
                 .lineTo(new Vector2d(-3, 60))
                 .build();
         rTraj6 = drive.trajectoryBuilder(rTraj5.end())
-                .lineToLinearHeading(new Pose2d(-13, 84.5, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(-13, 82.5, Math.toRadians(-90)))
                 .build();
+
+        //move up to backdrop before delivering yellow pixel
+        rTraj7 = drive.trajectoryBuilder(rTraj6.end())
+                .back(2)
+                .build();
+
     }
 
     //follow right pixel trajectories
     private void followRightPixelTraj() {
         //deliver purple pixel
         drive.followTrajectory(rTraj1);
-        drive.followTrajectory(rTraj1prime);
         drive.followTrajectory(rTraj2);
+
+        //drive underneath truss
         drive.followTrajectory(rTraj3);
         drive.followTrajectory(rTraj4);
+
+        //delay
         sleep(1000);
 
-        //drive to yellow pixel
+        //drive close to backdrop
         drive.followTrajectory(rTraj5);
         sleep(500);
         drive.followTrajectory(rTraj6);
-        //deliver arm
+
+        //extend arm
         Arm.autoDeliver2();
         Claw.autoDeliver2();
         waitForArm();
         sleep(1000);
+
+        //move up to backdrop before delivering yellow pixel
+        drive.followTrajectory(rTraj7);
+
+        //deliver yellow pixel
         Claw.openLeftClaw();
         sleep(1000);
+
         //retract
         Arm.autoArmUp();
         waitForArm();
