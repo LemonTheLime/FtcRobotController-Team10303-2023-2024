@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.test.motortest;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+@Disabled
 @Autonomous
 public class ArmTest extends LinearOpMode {
 

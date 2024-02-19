@@ -77,7 +77,7 @@ public class BlueLeft extends LinearOpMode {
         }
 
         //close camera
-        visionPortal.close();
+        //visionPortal.close();
     }
 
 
