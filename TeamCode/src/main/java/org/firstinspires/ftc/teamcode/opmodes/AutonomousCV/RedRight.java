@@ -79,7 +79,7 @@ public class RedRight extends LinearOpMode {
         }
 
         //close camera
-        visionPortal.close();
+        //visionPortal.close();
     }
 
 
@@ -104,7 +104,7 @@ public class RedRight extends LinearOpMode {
 
         //move up to backdrop before delivering yellow pixel
         lTraj4 = drive.trajectoryBuilder(lTraj3.end())
-                .back(2)
+                .back(2.75)
                 .build();
 
         //close arm and park
@@ -171,18 +171,18 @@ public class RedRight extends LinearOpMode {
 
         //move up to backdrop before delivering yellow pixel
         mTraj4 = drive.trajectoryBuilder(mTraj3.end())
-                .back(2)
+                .back(2.75)
                 .build();
 
         //close arm and park
-        mTraj5 = drive.trajectoryBuilder(mTraj5.end())
+        mTraj5 = drive.trajectoryBuilder(mTraj4.end())
                 .strafeLeft(23.5)
                 .addTemporalMarker(0, () -> {
                     Arm.autoReset();
                     Claw.reset();
                 })
                 .build();
-        mTraj6 = drive.trajectoryBuilder(mTraj6.end())
+        mTraj6 = drive.trajectoryBuilder(mTraj5.end())
                 .back(16)
                 .build();
     }
@@ -238,7 +238,7 @@ public class RedRight extends LinearOpMode {
 
         //move up to backdrop before delivering yellow pixel
         rTraj4 = drive.trajectoryBuilder(rTraj3.end())
-                .back(2)
+                .back(2.75)
                 .build();
 
         //close arm and park

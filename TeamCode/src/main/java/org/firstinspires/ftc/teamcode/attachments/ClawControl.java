@@ -21,8 +21,8 @@ public class ClawControl {
     //hardware fields
     private Servo leftClaw = null;
     private Servo rightClaw = null;
-    private Servo pitchLeft = null; //controls the pitch of the claw on the arm
-    private Servo pitchRight = null;
+    private Servo pitchServo = null; //controls the pitch of the claw on the arm
+    //private Servo pitchRight = null; deprecated
     //claw constants
     private boolean leftOpen = false;
     private boolean rightOpen = false;
@@ -63,11 +63,11 @@ public class ClawControl {
         //get servo from id
         leftClaw = hardwareMap.get(Servo.class, "leftClaw");
         rightClaw = hardwareMap.get(Servo.class, "rightClaw");
-        pitchLeft = hardwareMap.get(Servo.class, "leftPitch");
-        pitchRight = hardwareMap.get(Servo.class, "rightPitch");
+        pitchServo = hardwareMap.get(Servo.class, "pitch");
+        //pitchRight = hardwareMap.get(Servo.class, "rightPitch");
 
         //reverse direction
-        pitchLeft.setDirection(Servo.Direction.REVERSE);
+        pitchServo.setDirection(Servo.Direction.REVERSE);
         leftClaw.setDirection(Servo.Direction.REVERSE);
     }
 
@@ -229,14 +229,14 @@ public class ClawControl {
     public void rotateTo(double angle) {
         if(status) {
             if (angle > 1) {
-                pitchLeft.setPosition(1);
-                pitchRight.setPosition(1);
+                pitchServo.setPosition(1);
+                //pitchRight.setPosition(1);
             } else if (angle < 0) {
-                pitchLeft.setPosition(0);
-                pitchRight.setPosition(0);
+                pitchServo.setPosition(0);
+                //pitchRight.setPosition(0);
             } else {
-                pitchLeft.setPosition(angle);
-                pitchRight.setPosition(angle);
+                pitchServo.setPosition(angle);
+                //pitchRight.setPosition(angle);
             }
         }
     }
