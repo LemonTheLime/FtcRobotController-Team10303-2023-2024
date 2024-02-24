@@ -19,8 +19,6 @@ import org.firstinspires.ftc.vision.VisionPortal;
 @Autonomous(name = "RedRight")
 public class RedRight extends LinearOpMode {
 
-    //work on new changes
-
     /* * * * Attachments * * * */
     private ArmControl Arm = null;
     private ClawControl Claw = null;

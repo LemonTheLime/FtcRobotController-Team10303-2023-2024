@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.auto.DetectionProcessor;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.vision.VisionPortal;
 
-/* RedLeftPurpleOnly
- * Delivers purple pixel only
+/* RedLeft
+ * Delivers purple and yellow pixels to corresponding spike marks and then parks.
  */
 @Autonomous(name = "RedLeft")
 public class RedLeft extends LinearOpMode {

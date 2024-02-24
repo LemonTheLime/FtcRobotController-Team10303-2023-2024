@@ -16,8 +16,8 @@ import org.firstinspires.ftc.vision.VisionPortal;
 /* BlueLeft
  * Delivers purple and yellow pixels to corresponding spike marks and then parks.
  */
-@Autonomous(name = "BlueLeft")
-public class BlueLeft extends LinearOpMode {
+@Autonomous(name = "BlueLeftOld", group = "Old")
+public class BlueLeftOld extends LinearOpMode {
 
     /* * * * Attachments * * * */
     private ArmControl Arm = null;
@@ -31,8 +31,8 @@ public class BlueLeft extends LinearOpMode {
     private int spikeMark = 0; //1: left, 2: middle, 3: right
     private SampleMecanumDrive drive;
     private Trajectory lTraj1, lTraj2, lTraj3, lTraj4, lTraj5, lTraj6 = null;
-    private Trajectory mTraj1, mTraj2, mTraj3, mTraj4, mTraj5, mTraj6 = null;
-    private Trajectory rTraj1, rTraj1prime, rTraj2, rTraj3, rTraj4, rTraj5, rTraj6 = null;
+    private Trajectory mTraj1, mTraj2, mTraj3, mTraj4, mTraj5 = null;
+    private Trajectory rTraj1, rTraj1prime, rTraj2, rTraj3, rTraj4, rTraj5 = null;
 
     public void runOpMode() throws InterruptedException {
 
@@ -86,31 +86,27 @@ public class BlueLeft extends LinearOpMode {
     private void buildLeftPixelTraj() {
         //deliver purple pixel
         lTraj1 = drive.trajectoryBuilder(new Pose2d())
-                .lineToSplineHeading(new Pose2d(-26.5, -3, Math.toRadians(25)))
+                .lineToSplineHeading(new Pose2d(-21.5, -3, Math.toRadians(25)))
                 .build();
         lTraj2 = drive.trajectoryBuilder(lTraj1.end())
                 .lineToSplineHeading(new Pose2d(-15, 0, Math.toRadians(90)))
                 .build();
-
-        //drive close to backdrop
+        //deliver yellow pixel to backdrop
         lTraj3 = drive.trajectoryBuilder(lTraj2.end(), true)
-                .splineTo(new Vector2d(-18, -27), Math.toRadians(-90))
-                .build();
-
-        //move up to backdrop before delivering yellow pixel
-        lTraj4 = drive.trajectoryBuilder(lTraj3.end())
-                .back(2.75)
-                .build();
-
-        //close arm and park
-        lTraj5 = drive.trajectoryBuilder(lTraj4.end())
-                .strafeRight(17.5)
-                .addTemporalMarker(0, () -> {
-                    Arm.autoReset();
-                    Claw.reset();
+                .splineTo(new Vector2d(-17.5, -30), Math.toRadians(-90))
+                .addTemporalMarker(1.25, () -> {
+                    Arm.autoDeliver();
+                    Claw.autoDeliver();
                 })
                 .build();
-        lTraj6 = drive.trajectoryBuilder(lTraj5.end())
+        //close arm and park
+        lTraj4 = drive.trajectoryBuilder(lTraj3.end())
+                .strafeRight(16)
+                .addTemporalMarker(0, () -> {
+                    Arm.autoReset();
+                })
+                .build();
+        lTraj5 = drive.trajectoryBuilder(lTraj4.end())
                 .back(16)
                 .build();
     }
@@ -120,32 +116,19 @@ public class BlueLeft extends LinearOpMode {
         //deliver purple pixel
         drive.followTrajectory(lTraj1);
         drive.followTrajectory(lTraj2);
-
-        //move close to backdrop
+        //deliver yellow pixel to backdrop
         drive.followTrajectory(lTraj3);
-
-        //extend arm
-        Arm.autoDeliver();
-        Claw.autoDeliver();
+        //wait for arm to deliver and open claw
         waitForArm();
-        sleep(500);
-
-        //move up to backdrop before delivering yellow pixel
-        drive.followTrajectory(lTraj4);
+        Claw.openRightClaw();
         sleep(1000);
-
-        //deliver yellow pixel
-        Claw.openLeftClaw();
-        sleep(1000);
-
         //retract
         Arm.autoArmUp();
         Claw.reset();
         waitForArm();
-
         //park
+        drive.followTrajectory(lTraj4);
         drive.followTrajectory(lTraj5);
-        drive.followTrajectory(lTraj6);
         waitForArm();
     }
 
@@ -156,28 +139,25 @@ public class BlueLeft extends LinearOpMode {
                 .back(27.5)
                 .build();
         mTraj2 = drive.trajectoryBuilder(mTraj1.end())
-                .forward(14)
+                .forward(15)
                 .build();
-
-        //drive close to backdrop
+        //deliver yellow pixel to backdrop
         mTraj3 = drive.trajectoryBuilder(mTraj2.end(), true)
-                .splineTo(new Vector2d(-22, -29), Math.toRadians(-90))
+                .splineTo(new Vector2d(-24, -30), Math.toRadians(-90))
+                .addTemporalMarker(1.25, () -> {
+                    Arm.autoDeliver();
+                    Claw.autoDeliver();
+                })
                 .build();
-
-        //move up to backdrop before delivering yellow pixel
-        mTraj4 = drive.trajectoryBuilder(mTraj3.end())
-                .back(2.75)
-                .build();
-
         //close arm and park
-        mTraj5 = drive.trajectoryBuilder(mTraj4.end())
-                .strafeRight(23.5)
+        mTraj4 = drive.trajectoryBuilder(mTraj3.end())
+                .strafeRight(21.5)
                 .addTemporalMarker(0, () -> {
                     Arm.autoReset();
                     Claw.reset();
                 })
                 .build();
-        mTraj6 = drive.trajectoryBuilder(mTraj5.end())
+        mTraj5 = drive.trajectoryBuilder(mTraj4.end())
                 .back(16)
                 .build();
     }
@@ -187,32 +167,18 @@ public class BlueLeft extends LinearOpMode {
         //deliver purple pixel
         drive.followTrajectory(mTraj1);
         drive.followTrajectory(mTraj2);
-
-        //move close to backdrop
+        //deliver yellow pixel to backdrop
         drive.followTrajectory(mTraj3);
-
-        //extend arm
-        Arm.autoDeliver();
-        Claw.autoDeliver();
+        //wait for arm to deliver and open claw
         waitForArm();
-        sleep(500);
-
-        //move up to backdrop before delivering yellow pixel
-        drive.followTrajectory(mTraj4);
+        Claw.openRightClaw();
         sleep(1000);
-
-        //deliver yellow pixel
-        Claw.openLeftClaw();
-        sleep(1000);
-
         //retract
         Arm.autoArmUp();
-        Claw.reset();
         waitForArm();
-
         //park
+        drive.followTrajectory(mTraj4);
         drive.followTrajectory(mTraj5);
-        drive.followTrajectory(mTraj6);
         waitForArm();
     }
 
@@ -223,30 +189,28 @@ public class BlueLeft extends LinearOpMode {
                 .lineToSplineHeading(new Pose2d(-16.5, 0, Math.toRadians(-45)))
                 .build();
         rTraj1prime = drive.trajectoryBuilder(rTraj1.end())
-                .back(10.5)
+                .back(11.1)
                 .build();
         rTraj2 = drive.trajectoryBuilder(rTraj1prime.end())
                 .lineToSplineHeading(new Pose2d(-15, 0, Math.toRadians(0)))
                 .build();
-
-        //drive close to backdrop
+        //deliver yellow pixel to backdrop
         rTraj3 = drive.trajectoryBuilder(rTraj2.end(), true)
-                .splineTo(new Vector2d(-29, -27), Math.toRadians(-90))
-                .build();
-
-        //move up to backdrop before delivering yellow pixel
-        rTraj4 = drive.trajectoryBuilder(rTraj3.end())
-                .back(2.75)
-                .build();
-
-        //close arm and park
-        rTraj5 = drive.trajectoryBuilder(rTraj4.end())
-                .strafeRight(29)
-                .addTemporalMarker(0, () -> {
-                    Arm.autoReset();
+                .splineTo(new Vector2d(-30.75, -30), Math.toRadians(-90))
+                .addTemporalMarker(1.25, () -> {
+                    Arm.autoDeliver();
+                    Claw.autoDeliver();
                 })
                 .build();
-        rTraj6 = drive.trajectoryBuilder(rTraj5.end())
+        //close arm and park
+        rTraj4 = drive.trajectoryBuilder(rTraj3.end())
+                .strafeRight(27.25)
+                .addTemporalMarker(0, () -> {
+                    Arm.autoReset();
+                    Claw.reset();
+                })
+                .build();
+        rTraj5 = drive.trajectoryBuilder(rTraj4.end())
                 .back(16)
                 .build();
     }
@@ -257,32 +221,18 @@ public class BlueLeft extends LinearOpMode {
         drive.followTrajectory(rTraj1);
         drive.followTrajectory(rTraj1prime);
         drive.followTrajectory(rTraj2);
-
-        //move close to backdrop
+        //deliver yellow pixel to backdrop
         drive.followTrajectory(rTraj3);
-
-        //extend arm
-        Arm.autoDeliver();
-        Claw.autoDeliver();
+        //wait for arm to deliver and open claw
         waitForArm();
-        sleep(500);
-
-        //move up to backdrop before delivering yellow pixel
-        drive.followTrajectory(rTraj4);
+        Claw.openRightClaw();
         sleep(1000);
-
-        //deliver yellow pixel
-        Claw.openLeftClaw();
-        sleep(1000);
-
         //retract
         Arm.autoArmUp();
-        Claw.reset();
         waitForArm();
-
-        //park
+        //parkract and park
+        drive.followTrajectory(rTraj4);
         drive.followTrajectory(rTraj5);
-        drive.followTrajectory(rTraj6);
         waitForArm();
     }
     //wait for the arm and claw to deliver
