@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.teamcode.attachments.ArmControl;
 import org.firstinspires.ftc.teamcode.attachments.ClawControl;
 import org.firstinspires.ftc.teamcode.attachments.LauncherControl;
+import org.firstinspires.ftc.teamcode.attachments.LiftControl;
 
 @TeleOp(name = "TeleOpMode")
 public class TeleOpMode extends OpMode {
@@ -33,6 +34,8 @@ public class TeleOpMode extends OpMode {
     //launcher
     private LauncherControl Launcher = null;
     private boolean runLauncher = false;
+    //lift
+    private LiftControl Lift = null;
     //gamepads
     private String lastKeyPressed1 = "none";
     private String lastKeyPressed2 = "none";
@@ -58,10 +61,11 @@ public class TeleOpMode extends OpMode {
         //Claw mechanism
         Claw = new ClawControl(hardwareMap, telemetry);
 
-        //Launcher control
+        //Launcher mechanism
         Launcher = new LauncherControl(hardwareMap, telemetry);
 
-        //Arm.updatePIDF();
+        //Lift mechanism
+        Lift = new LiftControl(hardwareMap, telemetry);
     }
 
     //TeleOp init the motors
@@ -69,6 +73,7 @@ public class TeleOpMode extends OpMode {
         Arm.init();
         Claw.init();
         Launcher.init();
+        Lift.init();
         Claw.reset();
     }
 
@@ -113,6 +118,8 @@ public class TeleOpMode extends OpMode {
         if(runLauncher) {
             Launcher.open();
         }
+        //run lift
+        Lift.update();
     }
 
     //read the gamepad inputs
@@ -147,6 +154,24 @@ public class TeleOpMode extends OpMode {
 
         //hold b for launcher (both needed)
         runLauncher = gamepad1.b && gamepad2.b;
+
+        //left lift
+        if(gamepad2.left_bumper && gamepad2.left_trigger == 0) {
+            Lift.raise(0);
+        } else if(!gamepad2.left_bumper && gamepad2.left_trigger != 0) {
+            Lift.lower(0);
+        } else {
+            Lift.rest(0);
+        }
+
+        //right lift
+        if(gamepad2.right_bumper && gamepad2.right_trigger == 0) {
+            Lift.raise(1);
+        } else if(!gamepad2.right_bumper && gamepad2.right_trigger != 0) {
+            Lift.lower(1);
+        } else {
+            Lift.rest(1);
+        }
 
         //SINGLE PRESS BUTTONS
         //half power for drivetrain
@@ -255,6 +280,7 @@ public class TeleOpMode extends OpMode {
         Arm.telemetryOutput();
         Claw.telemetryOutput();
         Launcher.telemetryOutput();
+        Lift.telemetryOutput();
         telemetry.update();
     }
 }
