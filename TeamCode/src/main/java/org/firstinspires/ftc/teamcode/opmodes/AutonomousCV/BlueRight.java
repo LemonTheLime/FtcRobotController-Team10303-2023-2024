@@ -108,7 +108,7 @@ public class BlueRight extends LinearOpMode {
                 .lineTo(new Vector2d(-3, -60))
                 .build();
         lTraj6 = drive.trajectoryBuilder(lTraj5.end())
-                .lineToConstantHeading(new Vector2d(-28, -81.5))
+                .lineToConstantHeading(new Vector2d(-27, -81.5))
                 .build();
 
         //move up to backdrop before delivering yellow pixel
@@ -146,7 +146,7 @@ public class BlueRight extends LinearOpMode {
         drive.followTrajectory(lTraj7);
 
         //deliver yellow pixel
-        Claw.openLeftClaw();
+        Claw.openRightClaw();
         sleep(1000);
 
         //retract
@@ -218,7 +218,7 @@ public class BlueRight extends LinearOpMode {
         drive.followTrajectory(mTraj7);
 
         //deliver yellow pixel
-        Claw.openLeftClaw();
+        Claw.openRightClaw();
         sleep(1000);
 
         //retract
@@ -290,7 +290,7 @@ public class BlueRight extends LinearOpMode {
         drive.followTrajectory(rTraj7);
 
         //deliver yellow pixel
-        Claw.openLeftClaw();
+        Claw.openRightClaw();
         sleep(1000);
 
         //retract

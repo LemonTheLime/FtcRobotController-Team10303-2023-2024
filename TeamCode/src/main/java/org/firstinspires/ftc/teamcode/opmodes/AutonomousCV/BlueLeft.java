@@ -135,7 +135,7 @@ public class BlueLeft extends LinearOpMode {
         sleep(1000);
 
         //deliver yellow pixel
-        Claw.openLeftClaw();
+        Claw.openRightClaw();
         sleep(1000);
 
         //retract
@@ -202,7 +202,7 @@ public class BlueLeft extends LinearOpMode {
         sleep(1000);
 
         //deliver yellow pixel
-        Claw.openLeftClaw();
+        Claw.openRightClaw();
         sleep(1000);
 
         //retract
@@ -272,7 +272,7 @@ public class BlueLeft extends LinearOpMode {
         sleep(1000);
 
         //deliver yellow pixel
-        Claw.openLeftClaw();
+        Claw.openRightClaw();
         sleep(1000);
 
         //retract

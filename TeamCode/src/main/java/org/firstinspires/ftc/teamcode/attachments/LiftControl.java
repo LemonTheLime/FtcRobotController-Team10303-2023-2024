@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.attachments;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 /* Lift Control
  * runs the motor for the tape measure lifts
  */
+@Config
 public class LiftControl {
 
     //hardware
@@ -26,11 +28,11 @@ public class LiftControl {
     //motor specific constants
     private static final int TICKS_PER_REV = 288;
     private static final double GEAR_RATIO = 1;
-    private double power = 1;
+    //private double power = 0.2;
+    public static double motorPower = 0.5;
+    public static double servoPower = 1.0;
     private int leftEncoderValue;
     private int rightEncoderValue;
-    private double targetRotation;
-    private double pastTargetRotation;
     //rotation constants
     private static final double MIN_ROTATION = 0; //starting angle
     private static final double MAX_ROTATION = 20 * 2 * Math.PI; //20 rotations, each rotation decreases length
@@ -55,17 +57,20 @@ public class LiftControl {
         rightMotor = hardwareMap.get(DcMotorEx.class, "rightLiftMotor");
 
         //reverse motors here if needed:
-        //leftMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftMotor.setDirection(DcMotor.Direction.REVERSE);
+        //rightMotor.setDirection(DcMotor.Direction.REVERSE);
 
         //set motors to run with encoders
+        leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //get servos from ids
-        leftServo = hardwareMap.get(CRServo.class, "leftServoMotor");
-        rightServo = hardwareMap.get(CRServo.class,"rightServoMotor");
+        leftServo = hardwareMap.get(CRServo.class, "leftLiftServo");
+        rightServo = hardwareMap.get(CRServo.class,"rightLiftServo");
 
         //reverse servos here if needed:
         leftServo.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -87,7 +92,6 @@ public class LiftControl {
         t.addData("leftEncoderValue", leftEncoderValue);
         t.addData("rightEncoderValue", rightEncoderValue);
         t.addData("rotation", rotation);
-        t.addData("targetRotation", targetRotation);
         t.addLine();
     }
 
@@ -114,13 +118,13 @@ public class LiftControl {
                     break;
                 case RAISE:
                     //raise the lift
-                    leftMotor.setPower(0.1);
-                    leftServo.setPower(0.1);
+                    leftMotor.setPower(motorPower);
+                    leftServo.setPower(servoPower);
                     break;
                 case LOWER:
                     //lower the lift
-                    leftMotor.setPower(-0.1);
-                    leftServo.setPower(-0.1);
+                    leftMotor.setPower(-2 * motorPower);
+                    leftServo.setPower(-servoPower);
                     break;
             }
             //right lift
@@ -132,13 +136,13 @@ public class LiftControl {
                     break;
                 case RAISE:
                     //raise the lift
-                    rightMotor.setPower(0.1);
-                    rightServo.setPower(0.1);
+                    rightMotor.setPower(motorPower);
+                    rightServo.setPower(servoPower);
                     break;
                 case LOWER:
                     //lower the lift
-                    rightMotor.setPower(-0.1);
-                    rightServo.setPower(-0.1);
+                    rightMotor.setPower(-2 * motorPower);
+                    rightServo.setPower(-servoPower);
                     break;
             }
         }
