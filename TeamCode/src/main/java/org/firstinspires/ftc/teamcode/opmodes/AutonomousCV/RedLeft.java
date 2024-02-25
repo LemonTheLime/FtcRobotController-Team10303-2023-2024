@@ -105,12 +105,12 @@ public class RedLeft extends LinearOpMode {
                 .lineTo(new Vector2d(-3, 60))
                 .build();
         lTraj6 = drive.trajectoryBuilder(lTraj5.end())
-                .lineToConstantHeading(new Vector2d(-28, 81.5))
+                .lineToConstantHeading(new Vector2d(-28, 80))
                 .build();
 
         //move up to backdrop before delivering yellow pixel
         lTraj7 = drive.trajectoryBuilder(lTraj6.end())
-                .back(3.5)
+                .back(5)
                 .build();
     }
 
@@ -177,12 +177,12 @@ public class RedLeft extends LinearOpMode {
                 .lineTo(new Vector2d(-3, 60))
                 .build();
         mTraj6 = drive.trajectoryBuilder(mTraj5.end())
-                .lineToConstantHeading(new Vector2d(-22, 81.5))
+                .lineToConstantHeading(new Vector2d(-22, 80))
                 .build();
 
         //move up to backdrop before delivering yellow pixel
         mTraj7 = drive.trajectoryBuilder(mTraj6.end())
-                .back(3.5)
+                .back(5)
                 .build();
 
     }
@@ -253,12 +253,12 @@ public class RedLeft extends LinearOpMode {
                 .lineTo(new Vector2d(-3, 60))
                 .build();
         rTraj6 = drive.trajectoryBuilder(rTraj5.end())
-                .lineToLinearHeading(new Pose2d(-13, 81.5, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(-13, 80, Math.toRadians(-90)))
                 .build();
 
         //move up to backdrop before delivering yellow pixel
         rTraj7 = drive.trajectoryBuilder(rTraj6.end())
-                .back(3.5)
+                .back(5)
                 .build();
 
     }

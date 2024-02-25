@@ -53,11 +53,11 @@ public class LiftControl {
     //initialize motor hardware
     private void initHardware() {
         //get motors from ids
-        leftMotor = hardwareMap.get(DcMotorEx.class, "leftEncoder"); //leftLiftMotor
+        leftMotor = hardwareMap.get(DcMotorEx.class, "leftLiftMotor"); //leftLiftMotor
         rightMotor = hardwareMap.get(DcMotorEx.class, "rightLiftMotor");
 
         //reverse motors here if needed:
-        //leftMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftMotor.setDirection(DcMotor.Direction.REVERSE);
         //rightMotor.setDirection(DcMotor.Direction.REVERSE);
 
         //set motors to run with encoders
