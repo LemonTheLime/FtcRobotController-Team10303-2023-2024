@@ -94,12 +94,12 @@ public class BlueLeft extends LinearOpMode {
 
         //drive close to backdrop
         lTraj3 = drive.trajectoryBuilder(lTraj2.end(), true)
-                .splineTo(new Vector2d(-18, -27), Math.toRadians(-90))
+                .splineTo(new Vector2d(-18, -25.5), Math.toRadians(-90))
                 .build();
 
         //move up to backdrop before delivering yellow pixel
         lTraj4 = drive.trajectoryBuilder(lTraj3.end())
-                .back(2.75)
+                .back(3.25)
                 .build();
 
         //close arm and park
@@ -161,12 +161,12 @@ public class BlueLeft extends LinearOpMode {
 
         //drive close to backdrop
         mTraj3 = drive.trajectoryBuilder(mTraj2.end(), true)
-                .splineTo(new Vector2d(-22, -29), Math.toRadians(-90))
+                .splineTo(new Vector2d(-23.75, -25.5), Math.toRadians(-90))
                 .build();
 
         //move up to backdrop before delivering yellow pixel
         mTraj4 = drive.trajectoryBuilder(mTraj3.end())
-                .back(2.75)
+                .back(3.25)
                 .build();
 
         //close arm and park
@@ -231,12 +231,12 @@ public class BlueLeft extends LinearOpMode {
 
         //drive close to backdrop
         rTraj3 = drive.trajectoryBuilder(rTraj2.end(), true)
-                .splineTo(new Vector2d(-29, -27), Math.toRadians(-90))
+                .splineTo(new Vector2d(-29.75, -25.5), Math.toRadians(-90))
                 .build();
 
         //move up to backdrop before delivering yellow pixel
         rTraj4 = drive.trajectoryBuilder(rTraj3.end())
-                .back(2.75)
+                .back(3.25)
                 .build();
 
         //close arm and park

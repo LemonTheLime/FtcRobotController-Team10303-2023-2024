@@ -118,12 +118,12 @@ public class LiftControl {
                     break;
                 case RAISE:
                     //raise the lift
-                    leftMotor.setPower(motorPower);
+                    leftMotor.setPower(-motorPower/3);
                     leftServo.setPower(servoPower);
                     break;
                 case LOWER:
                     //lower the lift
-                    leftMotor.setPower(-2 * motorPower);
+                    leftMotor.setPower(2 * motorPower);
                     leftServo.setPower(-servoPower);
                     break;
             }
@@ -136,7 +136,7 @@ public class LiftControl {
                     break;
                 case RAISE:
                     //raise the lift
-                    rightMotor.setPower(motorPower);
+                    rightMotor.setPower(motorPower/3);
                     rightServo.setPower(servoPower);
                     break;
                 case LOWER:

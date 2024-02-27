@@ -108,12 +108,12 @@ public class BlueRight extends LinearOpMode {
                 .lineTo(new Vector2d(-3, -60))
                 .build();
         lTraj6 = drive.trajectoryBuilder(lTraj5.end())
-                .lineToConstantHeading(new Vector2d(-27, -81.5))
+                .lineToConstantHeading(new Vector2d(-19, -79.5))
                 .build();
 
         //move up to backdrop before delivering yellow pixel
         lTraj7 = drive.trajectoryBuilder(lTraj6.end())
-                .back(3.5)
+                .back(5.25)
                 .build();
     }
 
@@ -181,12 +181,12 @@ public class BlueRight extends LinearOpMode {
                 .lineTo(new Vector2d(-3, -60))
                 .build();
         mTraj6 = drive.trajectoryBuilder(mTraj5.end())
-                .lineToConstantHeading(new Vector2d(-22, -81.5))
+                .lineToConstantHeading(new Vector2d(-25.5, -79.5))
                 .build();
 
         //move up to backdrop before delivering yellow pixel
         mTraj7 = drive.trajectoryBuilder(mTraj6.end())
-                .back(3.5)
+                .back(5.25)
                 .build();
     }
 
@@ -253,12 +253,12 @@ public class BlueRight extends LinearOpMode {
                 .lineTo(new Vector2d(-3, -60))
                 .build();
         rTraj6 = drive.trajectoryBuilder(rTraj5.end())
-                .lineToConstantHeading(new Vector2d(-28, -81.5))
+                .lineToConstantHeading(new Vector2d(-31, -79.5))
                 .build();
 
         //move up to backdrop before delivering yellow pixel
-        lTraj7 = drive.trajectoryBuilder(lTraj6.end())
-                .back(3.5)
+        rTraj7 = drive.trajectoryBuilder(rTraj6.end())
+                .back(5.25)
                 .build();
     }
 

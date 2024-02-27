@@ -35,7 +35,7 @@ public class ArmControl {
     private static final double MAX_ROTATION = 180.0; //arm starts off here
     private static final double MIN_ROTATION = -38.0;
     public static final double DELIVER_ROTATION = 30; //teleop
-    private static final double AUTO_DELIVER_ROTATION = 12.5; //autonomous
+    private static final double AUTO_DELIVER_ROTATION = 5; //autonomous
     private static final double AUTO_DELIVER_ROTATION2 = 20;
     //state
     private ArmState armState = ArmState.INITIAL;
@@ -128,8 +128,10 @@ public class ArmControl {
                     case DELIVER:
                     case MOVING_TO_CUSTOM:
                     case CUSTOM:
-                    case AUTO:
                         power = 0.31;
+                        break;
+                    case AUTO:
+                        power = 0.30;
                         break;
                 }
 
